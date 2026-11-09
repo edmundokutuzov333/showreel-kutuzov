@@ -1,0 +1,32 @@
+{
+  "summary": "v2 showreel tested end-to-end. Backend 16/16 pytest pass: narration EN/PT gives 11 lines with exact times, vo 10.mp3 returns 200 audio/mpeg, 11.mp3 returns 404. Frontend: the loading screen shows, then the breach gate. Starting by click or by key works. Pause shows the overlay and clicking it resumes. Storyboard blocks seek to 0/3.6/21/45 and the scrubber seeks to 30. Narration PT/off/EN all keep 11 lines. Explore mode works fully: drag rotates (yaw 0.6->0.087), hover label shows, clicking a work opens the panel with a loaded image and a correct edmundokutuzov.art/work/<slug> link, filter chips update the engine and the active style, close/exit work, and Play from explore returns to the reel and plays. End state shows Explorar/Rever buttons and both work. Export completes with download-link 'edmundo-kutuzov-showreel-16x9.mp4 · 21.6 MB'. Every requested frame (2.1, 3.35, 9, 10, 15.2, 24.5, 30, 31.5, 38.3, 40, 46.8, 51.2, 58.5) shows real content, and no corner HUD/timecode appears in canvas frames. Zero console errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Breach gate", "issues": ["The gate still has small corner labels (top-left 'EDMUNDO KUTUZOV / ART DIRECTOR', top-right '-25.9692 / 32.5732 / DEPTH 000', bottom-left 'SHOWREEL · 60S'). They are site-style, but the user said they dislike recording-like corner elements, so consider centring or removing them."]},
+      {"screen": "Frame ~38.3 (stats)", "issues": ["The '№ 045 — SOCIAL MEDIA' label overlaps the artwork's yellow bars at bottom-right and is hard to read."]},
+      {"screen": "Finale 58.5", "issues": ["The top kicker 'ART DIRECTOR · MAPUTO — MOÇAMBIQUE' has very low contrast and is barely visible."]},
+      {"screen": "Mobile 390px", "issues": ["The 'Explorar arquivo' and 'Exportar vídeo 1080p' buttons wrap onto 2-3 lines.", "Timeline segment labels are truncated to 1-3 letters."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_reel_api.py", "/app/test_reports/pytest/pytest_results_iter2.xml"],
+  "action_items": [
+    "Optional: tone down or remove the corner labels on the breach gate (user dislikes HUD-like corners)",
+    "Optional: raise contrast of the finale kicker text and move the stats-scene work label off the artwork",
+    "Optional: improve mobile button wrapping"
+  ],
+  "critical_code_review_comments": [
+    "Stage.jsx BreachGate keydown calls preventDefault() on every key except Escape, including Tab, F5, Ctrl/Cmd+R and F12, while the gate is visible. Skip modifier combos and function keys.",
+    "useReel.restart does not clear selected or hover state (minor; currently harmless because mode switches to reel).",
+    "Catalog titles from the site start oddly ('de Novembro Webmasters', 'Opção', many 'Image Manipulation' / 'Social Media Study'). The live site has the same titles, so this is not a bug, but the explore labels could be prettified from the slug."
+  ],
+  "updated_files": ["/app/backend/tests/test_reel_api.py"],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "window.__reel exposes the engine (seek, t, playing, mode, explore.tYaw/filter). For seeked frames, inject CSS to hide breach-gate and stage-play-overlay, then screenshot with a clip of the reel-canvas box. A hover hit in explore was found at about the stage centre (0.4-0.5 width). Export takes about 62s and produces about 21.6MB mp4 in headless Chromium."
+}
+

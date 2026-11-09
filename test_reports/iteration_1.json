@@ -1,0 +1,34 @@
+{
+  "summary": "First full test of the Edmundo Kutuzov 60s WebGL showreel studio. Backend: 13/13 pytest passed (narration EN/PT/404, VO mp3 for EN/PT returns audio/mpeg with valid MP3 header, out-of-range/unknown lang 404, non-int 422). Frontend: page loads, stage-play-overlay appears, play/pause advance & freeze time, scrubber click at 50% seeks to 30s exactly, storyboard blocks seek to 0/8/25/42, narration lines seek to t-0.5 (1.8, 25.5, 53.9), PT toggle switches lines to Portuguese and loads 10 VO buffers, OFF keeps EN lines listed, EN restores, restart resets to 0 and plays, language switch during playback keeps playing. Visual frames at 11, 17.4, 27, 36, 44.5, 57.5 render real content (fan of posters, manifesto, campaign wall, 150+ stats, client rings, finale with EDMUNDO KUTUZOV / JUST A CREATIVE GUY. / edmundokutuzov.art). Export: MediaRecorder supported in headless Chromium; recording-badge visible, button shows 'A GRAVAR 2%' -> '9%' after ~7s, controls disabled during recording; full 60s export completed and download-link shown: edmundo-kutuzov-showreel-16x9.mp4 · 25.1 MB. No console errors (only a WebGL GPU-stall performance warning from software GL).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Timeline / engine end-of-reel", "issue": "When playback/export reaches the end, engine sets t=DUR but does not call onTime, so timeline-current-time stays at ~00:59:21 instead of 00:60:00 and the progress bar stops just short of the end.", "selector": "[data-testid='timeline-current-time']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Stage (paused / end of reel)", "issues": ["stage-play-overlay (80px round button + bg-black/25) sits directly over the 'KUTUZOV' wordmark on the finale frame after playback/export ends, obscuring the signature; consider hiding the overlay at t>=60 or showing a smaller replay button off-center."]},
+      {"screen": "Timeline", "issues": ["'Breach' segment is only 2s wide so its label is truncated to 'BREA'.", "End timecode label '00:60:00' uses non-standard format (fmt is 00:SS:FF with no minute field); consider 01:00:00 or mm:ss:ff."]},
+      {"screen": "Clients scene (~44.5s)", "issues": ["Headline 'Brands and teams I've worked with' is partially occluded by the 3D client pills (Pernod Ricard/giz) and the '01 CLARITY 02 RHYTHM 03 PRECISION' line is covered by KitKat/Flying Fish pills."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_reel_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "LOW: call this.onTime(DUR) in engine loop end branch so the UI shows 00:60:00 at the end",
+    "LOW: hide/relocate stage-play-overlay when at end of reel so the finale signature isn't covered",
+    "LOW: reduce occlusion of headline text by client pills at 42-48s"
+  ],
+  "critical_code_review_comments": [
+    "engine.record(): if MediaRecorder throws mid-way or the tab is hidden, onEnd is replaced and never restored (no try/finally); a failure leaves engine.onEnd pointing to the record resolver.",
+    "useReel.exportVideo sets playing=true before record() validates mimeType; on unsupported browsers the UI flickers but error is handled via setError - acceptable.",
+    "Canvas uses default preserveDrawingBuffer=false, so canvas pixel readback (e.g., for thumbnails/tests) returns black; captureStream export works fine.",
+    "Backend vo_file returns 502 with raw exception string in detail - fine for MVP but leaks internal error text."
+  ],
+  "updated_files": ["/app/backend/tests/test_reel_api.py"],
+  "success_rate": {"backend": "100%", "frontend": "100% (functional); minor cosmetic issues only"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "No auth. window.__reel exposes engine (seek/t/playing/score). Canvas pixel readback returns 0 (preserveDrawingBuffer false) - use page.screenshot with clip instead. Loading overlay finishes before Playwright script starts (assets local), so it wasn't observed. Full export in headless Chromium works (~65s) producing a 25MB mp4."
+}
+
