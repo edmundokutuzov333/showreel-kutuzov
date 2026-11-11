@@ -1,0 +1,35 @@
+name: Import original EK campaign galleries
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/import-ek-campaign-artworks.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-original-campaign-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: true
+      - name: Install image processing runtime
+        run: npm install --prefix /tmp/ek-image-tools --no-fund --no-audit sharp@0.34.4
+      - name: Download, optimise and verify 40 originals
+        run: node scripts/import-campaign-artworks.cjs
+      - name: Verify all actual campaign images were produced
+        run: |
+          test "$(find frontend/public/reel/campaigns -type f -name '*.webp' | wc -l)" -eq 40
+          node -e "const fs=require('fs');let d=JSON.parse(fs.readFileSync('frontend/public/reel/campaigns/manifest.json'));if(d.campaigns.length!==6||d.campaigns.reduce((n,c)=>n+c.frames.length,0)!==40)process.exit(1)"
+      - name: Commit source-provenanced art and manifest
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add frontend/public/reel/campaigns scripts/campaign-asset-checksums.json scripts/campaign-sources.json
+          git diff --cached --quiet || git commit -m "assets(showreel): import all 40 original artworks across six campaigns"
+          git push origin HEAD:main
