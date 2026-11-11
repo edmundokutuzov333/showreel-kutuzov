@@ -234,7 +234,7 @@ function brandWall(A){
  P(heading,-5.49,2.70,1.0);
  const sub=text(g,"MARCAS COM AS QUAIS JÁ TRABALHEI",17,
    {mono:true,color:C.ember,maxW:9,maxH:.25});
- P(sub,-5.49,3.26,1.0);
+ P(sub,-5.49,3.01,1.0);
  line(g,11.1,0,2.30,.22);
  const rowLength=8.5/5;
  return {name:"brands-i-have-worked-with",start:45,end:53.5,group:g,
@@ -275,7 +275,7 @@ function finale(){
    g.add(m);P(m,0,0,-1.7-i*.3);return m;
  });
  const url=text(g,"edmundokutuzov.art",34,{mono:true,anchor:"center",maxW:6.1,maxH:.48});
- P(url,0,-2.58,1.5);
+ P(url,0,-2.35,1.5);
  const bar=line(g,10.8,0,-3.23,.60);
  const sparks=Array.from({length:72},(_,i)=>{
    const m=makeLine(.23,.013,i%3?C.ember:C.primary,.28);
@@ -311,7 +311,7 @@ function finale(){
        sp.material.opacity=(.11+.23*Math.sin(u*2.1+i*.4)**2)*enter;
      });
      setOpacity(url,seg(u,2.45,3.25));
-     url.position.y=-2.58+.05*Math.sin(u*1.9);
+     url.position.y=-2.35+.05*Math.sin(u*1.9);
      bar.scale.x=.06+.94*seg(u,1.6,3.1);
      const shakeCam=shake(t,.12);
      setCam(ctx,[.72*Math.sin(u*.85)+shakeCam[0],.36*Math.cos(u*.68)+shakeCam[1],
