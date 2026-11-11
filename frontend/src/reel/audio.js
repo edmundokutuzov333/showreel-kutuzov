@@ -55,14 +55,15 @@ export class Score {
   }
 
   async loadVO(lines, base) {
-    this.vo = await Promise.all(
-      lines.map(async (l) => {
-        const r = await fetch(`${base}${l.url}`);
-        if (!r.ok) throw new Error(`VO ${l.i} failed`);
-        const buf = await this.ctx.decodeAudioData(await r.arrayBuffer());
-        return { t: l.t, buf };
-      })
-    );
+    const results = await Promise.allSettled(lines.map(async (l) => {
+      const r = await fetch(`${base}${l.url}`);
+      if (!r.ok) throw new Error(`VO ${l.i} failed with HTTP ${r.status}`);
+      const buf = await this.ctx.decodeAudioData(await r.arrayBuffer());
+      return { t: l.t, buf };
+    }));
+    this.vo = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+    if (!this.vo.length && lines.length) throw new Error("No narration could be loaded");
+    return { loaded: this.vo.length, total: lines.length };
   }
 
   clearVO() { this.vo = []; }

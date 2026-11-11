@@ -123,7 +123,7 @@ export class ReelEngine {
 
   async setNarration(lines, base) {
     if (!lines) return this.score.clearVO();
-    await this.score.loadVO(lines, base);
+    return this.score.loadVO(lines, base);
   }
 
   setParallax(x, y) {
@@ -225,36 +225,56 @@ export class ReelEngine {
   async record(onProgress) {
     const types = ["video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
     const mimeType = types.find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
-    if (!mimeType) throw new Error("Este browser não suporta gravação de vídeo. Use o Chrome ou Edge.");
+    if (!mimeType || typeof this.canvas.captureStream !== "function") throw new Error("Este browser não suporta a gravação de vídeo e áudio. Experimente Chrome, Edge ou Safari recente.");
     this.setMode("reel");
-    this.recording = true;
     this.setParallax(0, 0);
     this.par.x = this.par.y = 0;
     const stream = new MediaStream([...this.canvas.captureStream(60).getVideoTracks(), ...this.score.recDest.stream.getAudioTracks()]);
     const rec = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 24_000_000, audioBitsPerSecond: 256_000 });
+    this.recording = true;
     const chunks = [];
     rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-    const finished = new Promise((res) => { rec.onstop = res; });
+    let failed = null;
+    const finished = new Promise((resolve, reject) => {
+      rec.onstop = resolve;
+      rec.onerror = (event) => {
+        failed = new Error(event?.error?.message || "O navegador interrompeu a gravação.");
+        reject(failed);
+      };
+    });
     this.pause();
     this.seek(0);
     const prevEnd = this.onEnd;
     const ended = new Promise((res) => { this.onEnd = res; });
     const iv = setInterval(() => onProgress && onProgress(this.t / this.duration), 200);
+    let watchdog = null;
     try {
       rec.start(500);
       await this.play();
-      await ended;
+      await Promise.race([
+        ended,
+        new Promise((_, reject) => {
+          watchdog = setTimeout(() => reject(new Error("A gravação excedeu o tempo de segurança. Mantenha este separador visível e tente novamente.")), (this.duration + 25) * 1000);
+        }),
+      ]);
       await new Promise((r) => setTimeout(r, 300));
-      rec.stop();
+      if (rec.state !== "inactive") rec.stop();
       await finished;
+      if (failed) throw failed;
+      const blob = new Blob(chunks, { type: mimeType.split(";")[0] });
+      if (blob.size < 1024) throw new Error("A gravação ficou vazia. Tente noutro navegador.");
+      return { blob, ext: mimeType.includes("mp4") ? "mp4" : "webm" };
     } finally {
       clearInterval(iv);
+      clearTimeout(watchdog);
+      if (rec.state !== "inactive") rec.stop();
       this.recording = false;
       this.onEnd = prevEnd;
+      if (this.playing) this.pause();
       prevEnd && prevEnd();
-      stream.getTracks().forEach((tr) => tr.kind === "video" && tr.stop());
+      // Never stop the shared Web Audio destination track; later exports need it.
+      stream.getVideoTracks().forEach((tr) => tr.stop());
     }
-    return { blob: new Blob(chunks, { type: mimeType.split(";")[0] }), ext: mimeType.includes("mp4") ? "mp4" : "webm" };
   }
 
   dispose() {

@@ -1,28 +1,18 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { Play } from "lucide-react";
 import ExploreOverlay from "@/components/reel/ExploreOverlay";
 
 function BreachGate({ r }) {
-  useEffect(() => {
-    const onKey = (e) => {
-      if (["INPUT", "TEXTAREA"].includes(document.activeElement && document.activeElement.tagName)) return;
-      if (e.key === "Escape") return;
-      e.preventDefault();
-      r.toggle();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [r]);
   return (
     <button data-testid="breach-gate" onClick={r.toggle} className="group absolute inset-0 bg-[var(--bg)] text-left overflow-hidden">
       <span className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--ember)] shadow-[0_0_24px_4px_rgba(68,102,255,0.55)] gate-line" />
       <span className="absolute left-[6%] top-[9%] font-mono text-[10px] md:text-[11px] tracking-[0.3em] uppercase text-white/70">Edmundo Kutuzov<br /><span className="text-[var(--ember)]">Art Director · Maputo</span></span>
       <span className="absolute right-[6%] top-[9%] text-right font-mono text-[10px] md:text-[11px] tracking-[0.3em] uppercase text-[var(--ember)]">-25.9692 / 32.5732<br /><span className="text-white/50">Depth 000</span></span>
       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-8 md:translate-y-12 flex flex-col items-center gap-3 whitespace-nowrap">
-        <span className="font-mono text-[10px] md:text-xs tracking-[0.35em] uppercase text-white/80 group-hover:text-white transition-colors duration-300">Click · Any key</span>
+        <span className="font-mono text-[10px] md:text-xs tracking-[0.35em] uppercase text-white/80 group-hover:text-white transition-colors duration-300">Click · Enter / Space</span>
         <span className="font-display text-2xl md:text-4xl font-bold text-bone gate-breach">to breach</span>
       </span>
-      <span className="absolute left-[6%] bottom-[9%] font-mono text-[10px] tracking-[0.3em] uppercase text-white/40">Showreel · 60s · som ligado</span>
+      <span className="absolute left-[6%] bottom-[9%] font-mono text-[10px] tracking-[0.3em] uppercase text-white/40">Showreel · {r.duration}s · som ligado</span>
     </button>
   );
 }
@@ -33,7 +23,7 @@ const Stage = forwardRef(function Stage({ r }, ref) {
     return [(e.clientX - b.left) / b.width, (e.clientY - b.top) / b.height];
   };
   const fresh = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time < 0.01;
-  const paused = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= 0.01 && r.time < 59.9;
+  const paused = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= 0.01 && r.time < r.duration - 0.1;
   return (
     <div ref={ref} data-testid="reel-stage" className={`reel-stage relative w-full aspect-video bg-black overflow-hidden ${r.mode === "explore" ? "cursor-grab active:cursor-grabbing" : ""}`}
       onPointerMove={(e) => r.pointer("move", ...pos(e))}
@@ -59,7 +49,7 @@ const Stage = forwardRef(function Stage({ r }, ref) {
           </span>
         </button>
       )}
-      {r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= 59.9 && (
+      {r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= r.duration - 0.1 && (
         <div className="absolute bottom-4 right-4 flex gap-2">
           <button data-testid="stage-explore-button" onClick={() => r.setMode("explore")}
             className="h-10 px-4 rounded-full bg-[var(--primary)] font-mono text-[10px] tracking-[0.25em] uppercase text-white hover:bg-[#5a78ff] transition-colors duration-200">

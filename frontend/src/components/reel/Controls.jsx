@@ -47,15 +47,20 @@ export default function Controls({ r, onFullscreen }) {
           <button data-testid="export-video-button" onClick={r.exportVideo} disabled={!r.ready || busy}
             className="h-11 px-5 rounded-full bg-[var(--primary)] text-white font-mono text-[11px] tracking-[0.22em] uppercase flex items-center gap-2 hover:bg-[#5a78ff] transition-colors duration-200 disabled:opacity-50">
             {busy ? <Circle size={12} className="fill-red-500 text-red-500 animate-pulse" /> : <Download size={15} />}
-            {busy ? `A gravar ${Math.round(r.recording * 100)}%` : "Exportar 1080p"}
+            {busy ? `A gravar ${Math.round(r.recording * 100)}%` : "Preparar vídeo 1080p"}
           </button>
         </div>
       </div>
       {r.download && (
-        <a data-testid="download-link" href={r.download.url} download={r.download.name}
-          className="self-end font-mono text-[11px] tracking-[0.18em] text-[var(--ember)] hover:text-white underline underline-offset-4">
-          ↓ {r.download.name} · {(r.download.size / 1e6).toFixed(1)} MB
-        </a>
+        <div role="status" data-testid="download-ready" className="flex w-full flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-[#9cc6f5]/35 bg-[#4466ff]/10 px-4 py-3">
+          <span className="font-mono text-[11px] leading-relaxed text-white/75">
+            Vídeo pronto · {(r.download.size / 1e6).toFixed(1)} MB · {r.download.name.endsWith(".mp4") ? "MP4" : "WebM"}
+          </span>
+          <a data-testid="download-link" href={r.download.url} download={r.download.name}
+            className="inline-flex items-center gap-2 rounded-full bg-[#9cc6f5] px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-[#0a0d15] hover:bg-white transition-colors">
+            <Download size={15} /> Descarregar agora
+          </a>
+        </div>
       )}
     </div>
   );

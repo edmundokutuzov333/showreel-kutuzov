@@ -26,10 +26,10 @@ export default function handler(req, res) {
   const indices = version === "v3" ? [2,9,10] : Array.from({length:11},(_,i)=>i);
   const cues = version === "v3" ? [8,51,57.4] : TIMES;
   return res.status(200).json({
-    lang, version, voice:"onyx", model:"tts-1-hd",
+    lang, version, voice:lang === "pt" ? "pt-PT/tugao" : "en-US/joe", model:"piper-medium/pre-rendered",
     lines: indices.map((idx,i)=>({
       i, t:cues[i], text:LINES[lang][idx],
-      url:`/api/reel/vo/${lang}/${idx}.mp3`
+      url:`/reel/vo/${lang}/${idx}.mp3`
     }))
   });
 }

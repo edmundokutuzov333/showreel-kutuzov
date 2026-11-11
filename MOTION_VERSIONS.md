@@ -1,38 +1,33 @@
 # Showreel versions / production notes
 
-The current production contains three user-facing selectors:
+Three playable experiences coexist at /:
 
-- **V1 — Editorial reconstruction**: a source-code recreation of the 52-second Motion V1 aesthetic, using the artwork included with this repository. **It is not the archived 52s MP4 binary.** The historical MP4 remains in the original user-provided files, not in this Git repository.
-- **V2 — Original interactive**: the pre-existing 60s interactive Three.js reel, unchanged visual scene builders.
-- **V3 — Director's Cut**: original Breach introduction, then the new ten-beat creative treatment and signature.
+- **V1 — Editorial reconstruction (52s)**: rebuild from surviving portfolio assets, not the exact historical 52-second MP4. The original 960×540 / 24fps MP4 with AAC soundtrack was recovered from the user's ChatGPT Library, but is **not** hosted in this repo. This distinction is shown in the UI. To distribute the original at a permanent on-site path, copy the historical file to object storage or `frontend/public/reel/archive/v1-original.mp4` in a separate managed asset upload.
+- **V2 — Original interactive (60s)**: existing WebGL scene builders and their visual choreography are preserved unchanged.
+- **V3 — BREACH Director's Cut (60s)**: original Breach intro 0–3.6s followed by nine original chapters (artworks, materials, editorial, machine, overload, proof, creator and signature).
 
-All versions use the same portfolio assets, audio graph, and WebGL renderer.
-The voice API keeps the historical narration for V1/V2. V3 uses three lines drawn from the existing spoken phrases at 8s, 51s, and 57.4s.
+All versions render a 1920×1080, 16:9 WebGL canvas, with a dedicated synchronized WebAudio soundtrack. Recording is browser-side realtime, with MP4 or WebM chosen according to browser support.
 
-## Production limitations
+## Reliable narration
 
-- The API proxy `/api/reel/vo/{en|pt}/{idx}.mp3` relies on an upstream service and must be monitored; any failure is reported in the user interface.
-- Browser MediaRecorder is a **realtime capture**, not a deterministic/offline film render. Frame delivery and container support depend on the user's browser, GPU, and system resources.
-- Final distribution masters should be rendered and QC'd independently before commercial publication.
-- An original MP4 of V1 must be explicitly added to object storage (or `frontend/public/reel/archive/v1.mp4`) before the exact original can be offered online. Do not mislabel the reconstructed study as the original video.
+- `frontend/api/reel/narration.js` provides the EN/PT lines and scene-accurate cue times; V3 uses lines at 8s, 51s and 57.4s.
+- **22 pre-rendered MP3 voice masters** reside under `frontend/public/reel/vo/{en,pt}/{0..10}.mp3`. These are local files and do not depend on an inaccessible preview TTS service, a runtime API key or synthesis while playing.
+- EN voice was generated with Piper `en_US-joe-medium`. PT with Piper `pt_PT-tugão-medium`; source voice model cards report CC0 training datasets. Check the model-card terms before commercial distribution.
+- `/api/reel/vo/{lang}/{idx}.mp3` redirects to the corresponding static file for compatibility with older links.
+- Soundtrack is always available. **Sem voz** disables voice samples but retains instrumental/music and effects. Changing EN/PT reschedules playback at the current clock position.
+- Audio loading uses partial recovery: if a single sample is inaccessible, it warns rather than silencing the entire track.
 
-## Code map
+## Exporting and verifying downloads
 
-- `src/reel/intro.js`: original Breach, preserved.
-- `src/reel/directorCut.js`: V3 scene choreography and keyframes.
-- `src/reel/editorialStudy.js`: V1 editorial reconstruction.
-- `src/reel/engine.js`: version selection, playback, export, exploration.
-- `src/reel/audio.js`: music timing and synchronized cues.
-- `src/hooks/useReel.js`: UI playback controller, narration.
-- `api/reel/`: version-aware narrative metadata and voice proxy.
+Click **Preparar vídeo 1080p** and keep the foreground tab visible while the browser records. When recording is complete a clear **Descarregar agora** link appears. It is intentionally user-clickable: automatic browser downloads following a 60s recording may be blocked.
 
-## Checks
+- Chrome/Edge often export WebM; some Safari implementations support MP4.
+- The recording uses `canvas.captureStream(60)` and WebAudio's capture destination; browser resource limits can introduce dropped frames.
+- An explicit timeout and empty-blob check prevent silent indefinite or invalid exports.
+- For commercial distribution mastering, perform a separate verified deterministic render and inspect video, duration and audio using ffprobe, rather than treating browser MediaRecorder as a guaranteed frame-perfect cinematic render.
 
-Run `yarn test --watch=false` and `yarn build` from `frontend/`, then verify:
+## Validation
 
-1. V1 selection starts a 52s timeline; V2 and V3 are 60s.
-2. V2 matches the previous interactive film; V3 retains Breach 0-3.6s.
-3. EN/PT narration endpoints return relevant cues and audio; no-voice disables voice.
-4. Fullscreen, seek, pause, replay, explore mode and export in Chrome/Edge.
-5. Browser's downloaded recording has the expected number of frames and complete audio.
+Run `cd frontend && corepack yarn install --frozen-lockfile`, `CI=true corepack yarn test --watch=false --runInBand` and `CI=true corepack yarn build`.
 
+Manual QA: V1 52s and V2/V3 60s; seek/pause/replay/explore; EN/PT/off; play each segment; record V3 in each language and one instrumental version; check the downloaded file's duration/video/audio tracks and watch for frame stutter. Test on multiple browsers / GPUs.

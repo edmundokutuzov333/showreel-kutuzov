@@ -7,7 +7,7 @@ import Storyboard from "@/components/reel/Storyboard";
 const VERSIONS = [
   {id:"v1", label:"Versão 1", sub:"Editorial · reconstrução", desc:"Homenagem programada ao Motion V1 de 52 segundos. O MP4 histórico não está neste repositório."},
   {id:"v2", label:"Versão 2", sub:"Original · arquivo 3D", desc:"A experiência interactiva original preservada: galáxia, campanhas, clientes e assinatura."},
-  {id:"v3", label:"Director's Cut", sub:"Novo · Breach 2026", desc:"60 segundos de novas metamorfoses cinematográficas, editorial, materiais, ritmo e assinatura."}
+  {id:"v3", label:"Versão 3", sub:"Director's Cut · Breach 2026", desc:"60 segundos de novas metamorfoses cinematográficas, editorial, materiais, ritmo e assinatura."}
 ];
 
 export default function ReelStudio() {
@@ -46,7 +46,7 @@ export default function ReelStudio() {
           {r.error&&<p role="status" data-testid="reel-error" className="mt-4 font-mono text-[11px] text-[#ffadad]">{r.error}</p>}
           <p className="mt-4 font-mono text-[11px] leading-relaxed text-white/50">{selected.desc}</p>
           <p className="mt-3 font-mono text-[10px] tracking-[.09em] text-white/35">
-            Reprodução em tempo real. A exportação usa MediaRecorder e depende da capacidade gráfica do dispositivo e da disponibilidade das vozes. Para a gravação, mantenha o separador visível.
+            Reprodução em tempo real. A gravação capta vídeo e áudio em tempo real, com a opção de voz seleccionada. Depois de concluída, clique em Descarregar agora. Mantenha este separador visível. A extensão MP4 ou WebM depende do navegador.
           </p>
         </div>
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}

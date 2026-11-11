@@ -23,6 +23,10 @@ export function useReel() {
   const [voLoading, setVoLoading] = useState(false);
   const [recording, setRecording] = useState(null);
   const [download, setDownload] = useState(null);
+  const downloadUrlRef = useRef(null);
+  useEffect(() => () => {
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+  }, []);
   const [mode, setModeState] = useState("reel");
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -40,7 +44,12 @@ export function useReel() {
       } else {
         const { data } = await axios.get(`${API}/reel/narration`, { params: { lang: l, version } });
         setLines(data.lines);
-        await eng.setNarration(data.lines, BACKEND);
+        const status = await eng.setNarration(data.lines, BACKEND);
+        if (status && status.loaded < status.total) {
+          setError(`Foram carregadas ${status.loaded} de ${status.total} falas. A instrumental mantém-se disponível.`);
+        } else {
+          setError("");
+        }
       }
       if (eng.playing) eng.seek(eng.t);
     } catch (e) {
@@ -91,6 +100,8 @@ export function useReel() {
   const exportVideo = useCallback(async () => {
     const eng = engineRef.current;
     if (!eng || recording !== null) return;
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+    downloadUrlRef.current = null;
     setDownload(null);
     setModeState("reel");
     setRecording(0);
@@ -98,12 +109,10 @@ export function useReel() {
     try {
       const { blob, ext } = await eng.record((p) => setRecording(p));
       const url = URL.createObjectURL(blob);
-      const name = `edmundo-kutuzov-${version}-16x9.${ext}`;
+      downloadUrlRef.current = url;
+      const name = `edmundo-kutuzov-${version}-${langRef.current}-16x9.${ext}`;
+      // A fresh click is required: automatic downloads after 60s are often blocked.
       setDownload({ url, name, size: blob.size });
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = name;
-      a.click();
     } catch (e) {
       setError(e.message || "A exportação falhou.");
     } finally {
@@ -144,6 +153,8 @@ export function useReel() {
 
   const setVersion = useCallback((v) => {
     if (!["v1","v2","v3"].includes(v) || v === version || recording !== null) return;
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+    downloadUrlRef.current = null;
     setReady(false); setPlaying(false); setError(""); setProgress(0); setDownload(null);
     setTime(0); setModeState("reel"); setSelected(null); setVersionState(v);
   }, [version, recording]);
