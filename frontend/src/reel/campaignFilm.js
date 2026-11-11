@@ -289,9 +289,6 @@ function finale(){
        opacity:.11,side:THREE.DoubleSide,depthWrite:false}));
    g.add(m);P(m,0,0,-1.7-i*.3);return m;
  });
- const url=text(g,"edmundokutuzov.art",34,{mono:true,anchor:"center",maxW:6.1,maxH:.48});
- P(url,0,-2.35,1.5);
- const bar=line(g,10.8,0,-3.23,.60);
  const sparks=Array.from({length:72},(_,i)=>{
    const m=makeLine(.23,.013,i%3?C.ember:C.primary,.28);
    g.add(m);return m;
@@ -329,9 +326,6 @@ function finale(){
        sp.scale.x=.4+.9*Math.sin(u*2.5+i)**2;
        sp.material.opacity=(.11+.23*Math.sin(u*2.1+i*.4)**2)*enter;
      });
-     setOpacity(url,seg(u,2.45,3.25));
-     url.position.y=-2.35+.05*Math.sin(u*1.9);
-     bar.scale.x=.06+.94*seg(u,1.6,3.1);
      const shakeCam=shake(t,.12);
      setCam(ctx,[.72*Math.sin(u*.85)+shakeCam[0],.36*Math.cos(u*.68)+shakeCam[1],
        11.9-.38*seg(u,0,3)+.22*Math.sin(u*1.5)],[0,0,0],
