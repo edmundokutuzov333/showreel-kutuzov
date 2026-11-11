@@ -4,13 +4,13 @@ Three playable experiences coexist at /:
 
 - **V1 — Editorial reconstruction (52s)**: rebuild from surviving portfolio assets, not the exact historical 52-second MP4. The original 960×540 / 24fps MP4 with AAC soundtrack was recovered from the user's ChatGPT Library, but is **not** hosted in this repo. This distinction is shown in the UI. To distribute the original at a permanent on-site path, copy the historical file to object storage or `frontend/public/reel/archive/v1-original.mp4` in a separate managed asset upload.
 - **V2 — Original interactive (60s)**: existing WebGL scene builders and their visual choreography are preserved unchanged.
-- **V3 — BREACH Director's Cut (60s)**: original Breach intro 0–3.6s followed by nine original chapters (artworks, materials, editorial, machine, overload, proof, creator and signature).
+- **V3 — A POINT OF VIEW (60s)**: original typographic opening, ICOR, KitKat, Pembe, Webmasters, GIZ, Super Marés, Jimmys Killer, design/OOH, 20 genuine clients in groups of four, then the extruded official EK 3D logo. Actual selected campaign credits are separate from collaboration clients. V1 and V2 remain preserved.
 
 All versions render a 1920×1080, 16:9 WebGL canvas, with a dedicated synchronized WebAudio soundtrack. Recording is browser-side realtime, with MP4 or WebM chosen according to browser support.
 
 ## Reliable narration
 
-- `frontend/api/reel/narration.js` provides the EN/PT lines and scene-accurate cue times; V3 uses lines at 8s, 51s and 57.4s.
+- `frontend/api/reel/narration.js` provides the EN/PT lines and scene-accurate cue times; V3 uses lines at 8s, 54.5s and 57.4s.
 - **22 pre-rendered MP3 voice masters** reside under `frontend/public/reel/vo/{en,pt}/{0..10}.mp3`. These are local files and do not depend on an inaccessible preview TTS service, a runtime API key or synthesis while playing.
 - EN voice was generated with Piper `en_US-joe-medium`. PT with Piper `pt_PT-tugão-medium`; source voice model cards report CC0 training datasets. Check the model-card terms before commercial distribution.
 - `/api/reel/vo/{lang}/{idx}.mp3` redirects to the corresponding static file for compatibility with older links.
@@ -31,3 +31,10 @@ Click **Preparar vídeo 1080p** and keep the foreground tab visible while the br
 Run `cd frontend && corepack yarn install --frozen-lockfile`, `CI=true corepack yarn test --watch=false --runInBand` and `CI=true corepack yarn build`.
 
 Manual QA: V1 52s and V2/V3 60s; seek/pause/replay/explore; EN/PT/off; play each segment; record V3 in each language and one instrumental version; check the downloaded file's duration/video/audio tracks and watch for frame stutter. Test on multiple browsers / GPUs.
+
+## Curated V3 provenance
+
+- Real campaigns: ICOR 139, KitKat 140, Pembe 142, Webmasters 143/21/50, GIZ 146, Super Marés 145, Jimmys Killer 147, OOH 80, Phantom 95, Mixshow 128, Concrete Rhymes 134.
+- 20 real client logos from portfolio repo, not substitutes.
+- The actual three-polygon EK outline from src/components/logo-paths.ts is extruded by brandMark.js.
+- The browser recorder is not a frame-accurate offline cinematic master; QC on GPU is required.

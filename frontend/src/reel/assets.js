@@ -50,21 +50,26 @@ function toTexture(source) {
   return t;
 }
 
-function pillTexture(img) {
+function logoTexture(img) {
   const c = document.createElement("canvas");
   c.width = 640;
-  c.height = 240;
+  c.height = 320;
   const g = c.getContext("2d");
-  g.fillStyle = "#121829";
-  g.beginPath();
-  g.roundRect(4, 4, 632, 232, 116);
-  g.fill();
-  g.strokeStyle = "rgba(255,255,255,0.16)";
-  g.lineWidth = 3;
-  g.stroke();
-  const s = Math.min(380 / img.width, 110 / img.height);
-  g.drawImage(img, (640 - img.width * s) / 2, (240 - img.height * s) / 2, img.width * s, img.height * s);
-  return toTexture(c);
+  // Actual client logo art without fabricated badges or distorted aspect ratios.
+  const scale = Math.min(555 / img.width, 210 / img.height);
+  g.clearRect(0, 0, c.width, c.height);
+  g.drawImage(img, (c.width - img.width * scale) / 2,
+    (c.height - img.height * scale) / 2, img.width * scale, img.height * scale);
+  const texture = toTexture(c);
+  const px = g.getImageData(0,0,640,320).data;
+  let sum=0, count=0;
+  for(let i=0;i<px.length;i+=16){
+    if(px[i+3] < 70) continue;
+    sum += px[i]*.2126 + px[i+1]*.7152 + px[i+2]*.0722;
+    count++;
+  }
+  texture.userData.needsDarkPanel = count > 0 && sum / count > 195;
+  return texture;
 }
 
 function loadVideo(id) {
@@ -84,7 +89,7 @@ function loadVideo(id) {
 
 export async function loadAssets(onProgress) {
   const catalog = await (await fetch(`${BASE}/catalog.json`)).json();
-  const ids = [...new Set([...SEL.cinema, ...SEL.corridor, ...SEL.rush, 89, 135])];
+  const ids = [...new Set([...SEL.cinema, ...SEL.corridor, ...SEL.rush, 89, 135, 21, 50, 80, 95, 128, 134])];
   const total = ids.length + LOGOS.length + SEL.videos.length + 3;
   let done = 0;
   const tick = () => onProgress && onProgress(++done / total);
@@ -96,7 +101,7 @@ export async function loadAssets(onProgress) {
     Promise.all(['800 100px "Syne"', '700 100px "Syne"', '600 100px "Syne"', '500 20px "JetBrains Mono"', '400 20px "JetBrains Mono"'].map((f) => document.fonts.load(f))).then(tick),
     ...[0, 1].map((a) => loadImage(`${BASE}/atlas${a}.webp`).then((img) => { atlases[a] = toTexture(img); tick(); })),
     ...ids.map((id) => loadImage(`${BASE}/img/${pad3(id)}.webp`).then((img) => { tex[id] = toTexture(img); tick(); })),
-    ...LOGOS.map((f, i) => loadImage(`${BASE}/logos/${f}`).then((img) => { logos[i] = pillTexture(img); tick(); })),
+    ...LOGOS.map((f, i) => loadImage(`${BASE}/logos/${f}`).then((img) => { logos[i] = logoTexture(img); tick(); })),
     ...SEL.videos.map((id) => loadVideo(id).then((v) => {
       const t = new THREE.VideoTexture(v);
       t.colorSpace = THREE.NoColorSpace;

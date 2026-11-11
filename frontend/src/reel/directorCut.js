@@ -1,268 +1,283 @@
 import * as THREE from "three";
-import { C, ease, seg, lerp, makeText, makeSlab, makeTiles, makeLine, setOpacity, setCam, shake, clamp } from "./core";
-import { SEL } from "./assets";
-import { makePoses, galaxyPose, gridPose, vortexPose, pose } from "./formations";
+import {
+  C, ease, seg, lerp, texAspect, makeText, makeSlab, makeBackdrop,
+  makeLine, glowTexture, setOpacity, setCam, shake, makeTiles
+} from "./core";
+import { makeOfficialMark } from "./brandMark";
 
 /**
- * BREACH / Director's Cut, 60 seconds.
- * Every movement derives from original portfolio artwork. No stock art, no
- * synthetic campaigns, no arbitrary timeline randomness. Fully seekable.
+ * EK / A POINT OF VIEW — 60-second cinematic cut.
+ * Genuine projects and logos are sourced from edmundokutuzov.art.
+ * Project credits are separate from the client's collaboration wall.
+ * Every pose is a pure function of playhead time: scrubbing/replay works.
+ * V1 and V2 are not modified.
  */
-const FILM = [
-  ["archive",3.6,7],["artwork",7,14],["materials",14,21],
-  ["editorial",21,28],["machine",28,38],["overload",38,45],
-  ["proof",45,50],["creator",50,56],["signature",56,60]
+export const DIRECTOR_CUT_SCENES = [
+  ["01 / THE MARK", 3.6, 7.7],
+  ["02 / HUMAN STORIES", 7.7, 14.2],
+  ["03 / BRAND WORLDS", 14.2, 22.0],
+  ["04 / DIGITAL CULTURE", 22.0, 30.0],
+  ["05 / CULTURE & IMPACT", 30.0, 38.0],
+  ["06 / THE CRAFT", 38.0, 45.0],
+  ["07 / COLLABORATIONS", 45.0, 54.0],
+  ["08 / SIGNATURE", 54.0, 60.0],
 ];
-const HERO = [127,110,101,113,139,140,141,142,143,144,145,146,147,89,135];
-const CUTS = [43,44,45,46,20,36,37,66,73,94,138,123,99,105,60,7];
-const pos = (obj,x,y,z) => obj.position.set(x,y,z);
-function cut(t,at,width=0.22){ return Math.exp(-Math.pow((t-at)/width,2)); }
-function frame(group,tex,height=4.8,depth=0.06) {
-  const mesh=makeSlab(tex,height,depth);
-  group.add(mesh); return mesh;
-}
-function caption(group,text,x,y,clr=C.ember,size=18) {
-  const m=makeText({text,font:"JetBrains Mono",weight:500,size,color:clr,tracking:0.20});
-  pos(m,x,y,0.12); group.add(m); return m;
-}
-function title(group,text,size=170,color=C.bone) {
-  const m=makeText({text,font:"Syne",weight:800,size,color,anchor:"center"});
-  group.add(m); return m;
-}
-function baseScene(name,start,end,group,update,extras={}) { return {name,start,end,group,update,...extras}; }
-function camera(ctx,t,x=0,y=0,z=11,roll=0,look=[0,0,0]) {
-  const s=shake(t,0.25); setCam(ctx,[x+s[0],y+s[1],z],look,roll,35);
-  ctx.scene.fog.near=9;ctx.scene.fog.far=38;
-}
-function pulse(ctx,t,at,power=0.16) {
-  const v=cut(t,at,0.13);
-  ctx.post.uZoom.value+=power*v;
-  ctx.post.uCA.value+=0.004*v;
-  ctx.post.uFlash.value+=0.12*v;
+
+/* Editorial copy is distinct from the names of the actual campaigns. */
+export const SELECTED_WORKS = [
+  {id:139, eyebrow:"01 / HUMAN STORIES", title:"A DEPRESSÃO\nÉ REAL.", credit:"ICOR", kind:"CAMPAIGN / ART DIRECTION"},
+  {id:140, eyebrow:"02 / BRAND WORLDS", title:"PARA QUEM\nTU QUERES.", credit:"KITKAT", kind:"CAMPAIGN / KEY VISUAL"},
+  {id:142, eyebrow:"02 / BRAND WORLDS", title:"COZINHAR\nÉ ARTE.", credit:"PEMBE MOZ", kind:"CAMPAIGN / KEY VISUAL"},
+  {id:143, eyebrow:"03 / DIGITAL CULTURE", title:"DIGA YES.\nVIVA ONLINE.", credit:"WEBMASTERS", kind:"DIGITAL CAMPAIGN"},
+  {id:21, eyebrow:"03 / DIGITAL CULTURE", title:"A FÍSICA\nNÃO MENTE.", credit:"WEBMASTERS", kind:"SOCIAL / ART DIRECTION"},
+  {id:50, eyebrow:"03 / DIGITAL CULTURE", title:"GAME\nCHANGER.", credit:"WEBMASTERS", kind:"SOCIAL / GAMING"},
+  {id:146, eyebrow:"04 / CULTURE & IMPACT", title:"WE ARE\nGIZ.", credit:"GIZ", kind:"CAMPAIGN / ART DIRECTION"},
+  {id:145, eyebrow:"04 / CULTURE & IMPACT", title:"VIVA A\nEXPERIÊNCIA.", credit:"SUPER MARÉS", kind:"CAMPAIGN / KEY VISUAL"},
+  {id:147, eyebrow:"04 / CULTURE & IMPACT", title:"STREET\nCULTURE.", credit:"JIMMYS KILLER", kind:"CAMPAIGN / ART DIRECTION"},
+  {id:80, eyebrow:"05 / THE CRAFT", title:"BEYOND\nTHE SCREEN.", credit:"MOQ / OUTDOOR", kind:"OUT OF HOME"},
+  {id:95, eyebrow:"05 / THE CRAFT", title:"DESIGNED\nTO EXIST.", credit:"PHANTOM", kind:"PACKAGING / DESIGN"},
+  {id:128, eyebrow:"05 / THE CRAFT", title:"MAKE\nSOME NOISE.", credit:"MIXSHOW", kind:"KEY VISUAL / SOCIAL"},
+  {id:134, eyebrow:"05 / THE CRAFT", title:"WEAR\nTHE IDEA.", credit:"CONCRETE RHYMES", kind:"MERCH / VISUAL DESIGN"}
+];
+
+const CLIENT_NAMES = [
+  "ABSA","TOYOTA","NISSAN","HYUNDAI",
+  "GALP","TOTALENERGIES","VODACOM","RONIL AUTO",
+  "PERNOD RICARD","GIZ","MULTICHOICE","KITKAT",
+  "FLYING FISH","BRUTAL FRUIT","JOAQUIM CHAVES","PONTA APART",
+  "HOTEL CARDOSO","EMOSE","MCS","PROMAR"
+];
+
+const soft = (t,at,w=.12) => Math.exp(-Math.pow((t-at)/w,2));
+const fade = (v,d) => seg(v,0,.34)*(1-seg(v,d-.35,d));
+const pos = (m,x,y,z=0) => m.position.set(x,y,z);
+const txt = (text,size=80,color=C.bone,opts={}) => makeText({
+  text,font:opts.mono?"JetBrains Mono":"Syne",weight:opts.mono?500:800,
+  size,color,tracking:opts.tracking??(opts.mono?.17:-.022),
+  lineHeight:opts.lineHeight??1.04,anchor:opts.anchor||"left",
+  align:opts.align||"left"
+});
+
+function cinemaCam(ctx,t,x=0,y=0,z=12.5,roll=0){
+  const sh=shake(t,.22);
+  setCam(ctx,[x+sh[0],y+sh[1],z],[0,0,0],roll,35);
+  ctx.scene.fog.near=10;ctx.scene.fog.far=40;
+  ctx.post.uVig.value=.34;
+  ctx.post.uGrain.value=.035;
 }
 
-/** 03.6 — 07 : the archive becomes a gravitational fingerprint. */
-function archive(A,cloud) {
-  const g=new THREE.Group(), P=makePoses(A.catalog.items.length,71),o=pose();
-  const q=new THREE.Quaternion(),center=new THREE.Vector3(0,0,-12);
-  const ring=makeLine(10,0.014,C.ember,.9); g.add(ring);
-  return baseScene("impossible-archive",3.6,7,g,(u,t,ctx)=>{
-    const spread=ease.outExpo(seg(u,.15,2.3));
-    camera(ctx,t,0,0,lerp(8.2,13.8,spread));
-    q.copy(ctx.camera.quaternion);
-    A.catalog.items.forEach((it,i)=>{
-      galaxyPose(P[i],t*1.3,q,o,center,lerp(.08,1.18,spread));
-      const a=1-ease.inOut(seg(u,2.65,3.4));
-      cloud.set(i,o.p,o.q,o.s*(1-.85*seg(u,2.7,3.4)),o.d*a);
-    });
-    cloud.group.visible=true;
-    ring.visible=u>2.45;ring.scale.x=Math.max(.001,ease.outExpo(seg(u,2.55,3.15)));
-    ring.position.z=-5;
-    ctx.post.uSlitGlow.value=.3*cut(t,6.45,.3);
-    ctx.post.uZoom.value+=.22*(1-seg(u,0,.9));
-    pulse(ctx,t,3.6,.3);
-  });
+function projectedSlab(tex, maxH=4.7, maxW=7.4) {
+  return makeSlab(tex,Math.min(maxH,maxW/texAspect(tex)),.095);
 }
-/** 07 — 14 : 3D physical artworks are the camera's only stage. */
-function artworks(A) {
-  const g=new THREE.Group(), ids=[127,110,101,113], cards=ids.map((id,i)=>{
-    const root=new THREE.Group();g.add(root);
-    const m=frame(root,A.tex[id],5.7,.12);
-    const split=makeTiles(A.tex[id],5.7,i%2?6:7,i%2?2:1,70+i);
-    root.add(split);m.visible=false;
-    const tag=caption(root,`№ ${String(id).padStart(3,"0")} — EDMUNDO KUTUZOV`, -2.8,-3.1);
-    return {root,split,tag,id};
-  });
-  return baseScene("artwork-becomes-reality",7,14,g,(u,t,ctx)=>{
-    const idx=Math.min(3,Math.floor(u/1.75)),v=u-idx*1.75;
-    cards.forEach((p,i)=>{p.root.visible=i===idx;});
-    const p=cards[idx],enter=ease.outExpo(seg(v,0,.75)),leave=ease.inExpo(seg(v,1.25,1.75));
-    const spread=(1-enter)+leave;
-    p.split.children.forEach((m,i)=>{
-      const d=m.userData.dir||{x:Math.sin(i),y:Math.cos(i),z:0};
-      m.position.set(m.userData.base.x+d.x*spread*3.8,m.userData.base.y+d.y*spread*2.6,d.z*spread*4.3);
-      m.rotation.set(d.y*spread*.55,d.x*spread*.8,Math.sin(i)*spread*.12);
-    });
-    p.split.userData.mat.opacity=Math.min(1,seg(v,0,.1))*(1-seg(v,1.62,1.75));
-    setOpacity(p.tag,ease.out(seg(v,.3,.8))*(1-seg(v,1.35,1.72)));
-    camera(ctx,t,lerp(idx%2?2.5:-2.5,0,enter)+Math.sin(v*2)*.35,.05,lerp(12.7,10.2,enter),.06*Math.sin(v*3));
-    ctx.post.uWhip.value.x+=.075*cut(v,1.7,.16)*(idx%2?-1:1);
-    if(v<.2&&idx>0)pulse(ctx,t,7+idx*1.75,.22);
-  });
+
+function anEdge(g,x,y,w=2.0){
+  const line=makeLine(w,.022,C.ember,.85);
+  pos(line,x,y,.28);g.add(line);return line;
 }
-/** 14 — 21 : the light of one campaign inherits the next scene. */
-function materials(A) {
-  const g=new THREE.Group(), ids=[139,144,140,141],cards=ids.map((id,i)=>{
-    const m=frame(g,A.tex[id],5.35);
-    m.position.z=-.2*i;return m;
-  });
-  const beam=makeLine(12,.025,C.ember,.8);g.add(beam);
-  return baseScene("material-switch",14,21,g,(u,t,ctx)=>{
-    const idx=Math.min(3,Math.floor(u/1.75)),v=u-idx*1.75;
-    cards.forEach((m,i)=>{
-      m.visible=i===idx;
-      if(i!==idx)return;
-      const come=ease.outExpo(seg(v,0,.85)),out=ease.inExpo(seg(v,1.23,1.75));
-      m.rotation.y=(1-come)*(idx%2?-.85:.85)+out*(idx%2?.88:-.88);
-      m.rotation.z=.06*Math.sin(v*1.7);
-      m.position.set((1-come)*(idx%2?-1.5:1.5),.07*Math.sin(v*2),-out*2);
-      m.scale.setScalar(lerp(.84,1.02,come)*(1+.12*out));
-    });
-    beam.rotation.z=Math.sin(u*1.2)*.16;
-    beam.position.y=2.85-5.7*seg(v,1.19,1.75);
-    beam.visible=v>1.19;
-    ctx.post.uSlitGlow.value=.45*cut(v,1.46,.18);
-    ctx.post.uWhip.value.y=.07*cut(v,1.55,.18);
-    camera(ctx,t,Math.sin(u*.7)*.35,0,9.6+.35*Math.sin(u));
-    pulse(ctx,t,17.5,.14);
-  });
+
+function glowDisc(size=7) {
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(size,size),
+    new THREE.MeshBasicMaterial({map:glowTexture(),transparent:true,
+      depthWrite:false,blending:THREE.AdditiveBlending,opacity:.58,fog:false}));
+  return m;
 }
-/** 21 — 28 : archival 2D editorial logic, not another galaxy. */
-function editorial(A) {
-  const g=new THREE.Group(),ids=[143,145,146,147,127,113],meshes=ids.map((id,i)=>{
-    const m=frame(g,A.tex[id],i===0?4.3:2.7,.04);return m;
-  });
-  const mono=title(g,"NOT\nORDINARY.",175,C.bone);
-  const cutline=makeLine(12,.014,C.ember,.95);g.add(cutline);
-  caption(g,"EDMUNDO KUTUZOV   /   VISUAL ARCHIVE",-4.6,-3.3,C.ember,17);
-  return baseScene("editorial-collision",21,28,g,(u,t,ctx)=>{
-    const beat=Math.floor(u/.875),stage=beat%4;
-    meshes.forEach((m,i)=>{
-      const on=(i===((beat+Math.floor(beat/4))%meshes.length));
-      m.visible=on;
-      const k=(i*2+beat)%7;
-      m.position.set(1.35+(k-3)*.22,.15+.1*Math.sin(u*2),0);
-      m.rotation.z=Math.sin(u*.9+i)*.075;
-      m.scale.setScalar(1+.16*cut(u%1.75,.05,.22));
-    });
-    mono.visible=stage===1||stage===3;
-    mono.position.x=stage===3?1.55:-1.95;
-    mono.position.y=stage===3?-1.7:1.75;
-    mono.scale.setScalar(stage===3?.55:.72);
-    cutline.position.y=lerp(-2.7,2.5,seg(u%1.75,0,1.75));
-    camera(ctx,t,-.3,0,11.9,0);
-    ctx.post.uFlash.value+=.18*cut(u,.04,.09);
-    ctx.post.uGlitch.value+=.11*cut(u%1.75,0,.13);
-    ctx.post.uWhip.value.x+=stage%2?.025:-.025;
-    ctx.post.uVig.value=.25;
-  });
-}
-/** 28 — 38 : a deterministic inheritance machine of real artwork. */
-function machine(A){
-  const g=new THREE.Group(),ids=[139,140,141,142,143,144,145,146,147,127,110,101],objs=ids.map((id,i)=>{
-    const m=frame(g,A.tex[id],2.35+(i%4)*.19,.07);
-    return m;
-  });
-  const stripe=makeLine(24,.02,C.ember,.8);g.add(stripe);
-  return baseScene("creative-machine",28,38,g,(u,t,ctx)=>{
-    const phase=u/10,cutN=Math.floor(u/.625);
-    objs.forEach((m,i)=>{
-      const a=i*2.399+phase*2;
-      const r=1.5+(i%5)*1.2;
-      const row=Math.floor(i/4),col=i%4;
-      const layout=ease.inOut(seg(u,0,2.1))*(1-ease.inOut(seg(u,7.8,10)));
-      m.position.set(lerp(Math.cos(a)*r,(col-1.5)*3.1,layout),lerp(Math.sin(a)*2.4,(row-1)*2.38,layout),lerp(-i*.5,-row*1.0,layout));
-      m.rotation.y=lerp(Math.sin(a)*.65,0,layout);
-      m.rotation.z=lerp(Math.sin(i+phase)*.15,0,layout);
-      m.scale.setScalar(.8+.2*cut(u,Math.floor(u/.625)*.625,.14));
-    });
-    stripe.rotation.z=Math.sin(u*2)*.45;
-    stripe.position.y=3.1-6.2*(u/10);
-    const move=cut(u,cutN*.625,.12);
-    ctx.post.uZoom.value+=move*.05;
-    ctx.post.uCA.value+=move*.002;
-    camera(ctx,t,Math.sin(u*.47)*1.9,Math.sin(u*.3)*.4,lerp(15.5,12.2,seg(u,0,6)),Math.sin(u*.2)*.02);
-  });
-}
-/** 38 — 45 : choreography at the beat, one visual event at a time. */
-function overload(A){
-  const g=new THREE.Group(),cards=CUTS.map((id,i)=>frame(g,A.tex[id],5.8,.08));
-  return baseScene("controlled-overload",38,45,g,(u,t,ctx)=>{
-    const moment=Math.min(cards.length-1,Math.floor(u/(7/cards.length)));
-    const v=(u/(7/cards.length))%1;
-    cards.forEach((m,i)=>{m.visible=i===moment;});
-    const m=cards[moment],out=ease.inExpo(seg(v,.70,1)),enter=ease.outExpo(seg(v,0,.35));
-    m.position.set((1-enter)*(moment%2?-2:2)-out*(moment%2?2:-2),0,-out*3);
-    m.rotation.y=(1-enter)*(moment%2?-.7:.7)+out*.7;
-    m.rotation.z=(moment%4-1.5)*.045;
-    m.scale.setScalar(lerp(.95,1.05,enter)+.13*out);
-    camera(ctx,t,Math.sin(moment*2)*.3,Math.cos(moment*3)*.15,9.75);
-    ctx.post.uGlitch.value+=.08*cut(v,0,.07);
-    ctx.post.uWhip.value.x+=out*.10*(moment%2?1:-1);
-    ctx.post.uZoom.value+=.08*cut(v,0,.07);
-    ctx.post.uFlash.value+=.1*cut(v,0,.05);
-    ctx.scene.fog.far=30;
-  });
-}
-/** 45 — 50 : high-end proof, never a logo spinner. */
-function proof(A){
-  const g=new THREE.Group(),labels=["ABSA","TOYOTA","VODACOM","KITKAT","GIZ","TOTALENERGIES"];
-  const ids=[0,1,6,11,9,5], cards=ids.map((n,i)=>{
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(4.8,1.8),new THREE.MeshBasicMaterial({map:A.logos[n],transparent:true,depthWrite:false}));
-    g.add(m);return m;
-  });
-  const line=makeLine(8,.014,C.ember,.7);g.add(line);
-  return baseScene("the-proof",45,50,g,(u,t,ctx)=>{
-    const idx=Math.min(5,Math.floor(u/(5/6))), v=(u/(5/6))%1;
-    cards.forEach((m,i)=>m.visible=i===idx);
-    const p=cards[idx];p.position.set(0,.15+1.0*(1-ease.outExpo(seg(v,0,.24))),0);
-    p.scale.setScalar(.94+.06*ease.outExpo(seg(v,0,.35)));
-    p.material.opacity=seg(v,0,.13)*(1-seg(v,.81,1));
-    line.position.y=-1.45;
-    line.scale.x=ease.outExpo(seg(v,0,.4));
-    camera(ctx,t,0,0,10.7);
-    ctx.post.uZoom.value+=.09*cut(v,0,.08);
-  });
-}
-/** 50 — 56 : negative-space E/K assembled from the portfolio. */
-function creator(A){
-  const g=new THREE.Group(),ids=[127,110,101,113,139,140,141,142,143,144,145,146,147,89,135];
-  const cards=ids.map(id=>frame(g,A.tex[id],1.2,.06));
-  const letter=title(g,"E  K",320,C.bone);
-  const rule=makeLine(11,.017,C.ember,.9);g.add(rule);
-  return baseScene("creator-revealed",50,56,g,(u,t,ctx)=>{
-    const join=ease.inOut(seg(u,.8,4.4)),exit=ease.inExpo(seg(u,5.0,6));
-    cards.forEach((m,i)=>{
-      const row=Math.floor(i/5),col=i%5;
-      const a=i*2.399+u*.7,r=2.2+(i%4)*1.0;
-      m.position.set(lerp(Math.cos(a)*r,(col-2)*1.65,join),lerp(Math.sin(a)*2.8,(row-1)*1.6,join),lerp(-i*.35,-2.1,join)-exit*10);
-      m.rotation.y=lerp(Math.sin(a)*.85,0,join);
-      m.rotation.z=lerp(Math.sin(i+u)*.4,0,join);
-      m.scale.setScalar(lerp(1,.8,join)*(1-exit));
-    });
-    letter.position.z=-1.3;letter.scale.setScalar(.75+.3*join);
-    setOpacity(letter,.85*seg(u,2.2,3.5)*(1-exit));
-    rule.scale.x=Math.max(.001,ease.outExpo(seg(u,4.2,5.4)));
-    rule.position.y=0;rule.position.z=-.8;
-    camera(ctx,t,Math.sin(u*.8)*.5,0,lerp(14,12,join),.04*Math.sin(u));
-    ctx.post.uZoom.value+=.27*exit;
-    pulse(ctx,t,55.6,.25);
-  });
-}
-/** 56 — 60 : the restrained, legible signature. */
-function signature(){
+
+/** The actual portfolio monogram, revealed as a physical object. */
+function openingMark() {
   const g=new THREE.Group();
-  const a=title(g,"EDMUNDO",220),b=title(g,"KUTUZOV",220);
-  const line=makeLine(12,.021,C.ember,.95);g.add(line);
-  const tagline=title(g,"JUST A CREATIVE GUY.",48,C.ember);
-  const url=caption(g,"edmundokutuzov.art",-1.45,-2.35,C.bone,29);
-  const meta=caption(g,"ART DIRECTOR  /  MAPUTO  /  2026",-2.6,-3.2,C.muted,16);
-  return baseScene("the-signature",56,60,g,(u,t,ctx)=>{
-    const l=ease.outExpo(seg(u,0,1.1)),show=ease.outExpo(seg(u,.45,1.55));
-    a.position.y=lerp(3.5,1.32,l);b.position.y=lerp(-3.5,-.47,l);
-    a.rotation.z=(1-l)*-.10;b.rotation.z=(1-l)*.10;
-    a.scale.setScalar(.88+.12*l);b.scale.setScalar(.88+.12*l);
-    line.position.y=.41;line.scale.x=Math.max(.001,l);
-    tagline.position.y=-1.58;setOpacity(tagline,show);
-    setOpacity(url,ease.outExpo(seg(u,1.3,2.3)));
-    setOpacity(meta,ease.outExpo(seg(u,1.7,2.7))*.8);
-    camera(ctx,t,0,0,12.6);
-    ctx.post.uVig.value=.25;
-    ctx.post.uSlitGlow.value=.6*cut(u,.1,.2);
+  const mark=makeOfficialMark();g.add(mark);pos(mark,2.3,0,.2);
+  const halo=glowDisc(8.0);g.add(halo);pos(halo,2.4,0,-2);
+  const a=txt("NOT JUST\nDESIGN.",178);g.add(a);pos(a,-5.65,1.0,.45);
+  const b=txt("A POINT OF VIEW",21,C.ember,{mono:true,tracking:.26});
+  g.add(b);pos(b,-5.55,-1.28,.46);
+  const c=txt("EDMUNDO KUTUZOV  /  MAPUTO",18,C.muted,{mono:true,tracking:.18});
+  g.add(c);pos(c,-5.55,-2.82,.45);
+  const rule=anEdge(g,-4.55,-1.71,2.0);
+  const scan=makeLine(10,.02,C.ember,.32);g.add(scan);pos(scan,0,0,2);
+  return {name:"the-official-mark",start:3.6,end:7.7,group:g,
+    update(u,t,ctx){
+      const arrive=ease.outExpo(seg(u,.02,1.75));
+      const leave=ease.inExpo(seg(u,3.66,4.1));
+      mark.rotation.set(-.22+.22*arrive,.95*(1-arrive)+.12*Math.sin(u*.54),-.14*(1-arrive));
+      mark.scale.setScalar(.3+.7*arrive+.11*leave);
+      mark.position.z=-3+3.2*arrive+4*leave;
+      halo.material.opacity=.36*arrive*(1-leave);
+      halo.scale.setScalar(.65+.4*arrive);
+      setOpacity(a,arrive*(1-leave));
+      setOpacity(b,seg(u,.9,1.5)*(1-leave));
+      setOpacity(c,seg(u,1.35,1.9)*(1-leave));
+      rule.scale.x=Math.max(.001,ease.outExpo(seg(u,1.0,1.8)));
+      scan.position.y=2.8-5.6*seg(u,1.3,3.5);
+      scan.material.opacity=.28*seg(u,1.2,1.6)*(1-leave);
+      cinemaCam(ctx,t,.1,-.05,12.75);
+      ctx.post.uSlitGlow.value=.15*soft(u,2.6,.4);
+      ctx.post.uZoom.value+=.2*soft(u,.1,.22)+leave*.25;
+      ctx.post.uFlash.value+=.18*soft(u,.1,.08);
+    }
+  };
+}
+
+/* The first six seconds of each project are editorial, not a revolving
+   catalogue: large real art, controlled typography and camera blocking. */
+function makeProject(A,info,number) {
+  const group=new THREE.Group();
+  const tex=A.tex[info.id];
+  const backdrop=makeBackdrop(tex,19,11,{bias:6,dimK:.25});
+  pos(backdrop,0,0,-7.0);group.add(backdrop);
+  const wash=new THREE.Mesh(new THREE.PlaneGeometry(6.3,8.0),
+    new THREE.MeshBasicMaterial({color:C.bg,transparent:true,opacity:.72,depthWrite:false}));
+  pos(wash,3.7,0,-2);group.add(wash);
+  const slab=projectedSlab(tex,5.1,7.2);group.add(slab);
+  pos(slab,-1.85,0,-.55);
+  const shadow=glowDisc(8);group.add(shadow);pos(shadow,-2.2,.15,-1.8);
+  shadow.material.opacity=.12;
+  const headline=txt(info.title,115,C.bone,{lineHeight:1.01});
+  group.add(headline);pos(headline,2.0,1.1,.2);
+  const kicker=txt(info.eyebrow,16,C.ember,{mono:true,tracking:.28});
+  group.add(kicker);pos(kicker,2.05,2.75,.25);
+  const credit=txt(info.credit,27,C.bone,{mono:true,tracking:.08});
+  group.add(credit);pos(credit,2.05,-1.25,.28);
+  const kind=txt(info.kind,17,C.muted,{mono:true,tracking:.12});
+  group.add(kind);pos(kind,2.05,-1.71,.27);
+  const numer=txt(String(number+1).padStart(2,"0")+" / "+String(SELECTED_WORKS.length).padStart(2,"0"),
+    16,C.ember,{mono:true,tracking:.22});group.add(numer);pos(numer,-5.7,-3.18,.33);
+  const line=anEdge(group,2.85,-2.25,1.6);
+  return {group,slab,backdrop,shadow,headline,kicker,credit,kind,numer,line,info};
+}
+
+function projectChapter(A,name,start,end,work) {
+  const group=new THREE.Group();
+  const slides=work.map(id=>{
+    const info=SELECTED_WORKS.find(x=>x.id===id);
+    const slide=makeProject(A,info,SELECTED_WORKS.indexOf(info));
+    group.add(slide.group);return slide;
   });
+  const delta=(end-start)/slides.length;
+  const isCraft=name==="the-craft";
+  return {name,start,end,group,
+    update(u,t,ctx) {
+      const index=Math.min(slides.length-1,Math.floor(u/delta));
+      const v=u-index*delta;
+      slides.forEach((s,i)=>s.group.visible=i===index);
+      const s=slides[index],enter=ease.outExpo(seg(v,0,Math.min(.73,delta*.4)));
+      const leave=ease.inExpo(seg(v,delta-.45,delta));
+      const f=fade(v,delta);
+      s.slab.position.set(-2.1+(1-enter)*(index%2?-3.0:3.0)-leave*(index%2?1.8:-1.8),
+        .05+.10*Math.sin(v*.8),-.55+1.1*leave);
+      s.slab.rotation.set(-.027*Math.sin(v*1.1),(1-enter)*(index%2?-.65:.65)+leave*.42,(1-enter)*(index%2?-.09:.09));
+      s.slab.scale.setScalar(.98+.032*enter+.035*Math.sin(v*.33));
+      s.shadow.material.opacity=.19*enter*(1-leave);
+      s.backdrop.material.uniforms.dimK.value=.13+.11*enter;
+      const labels=[s.headline,s.kicker,s.credit,s.kind,s.numer];
+      labels.forEach((m,j)=>setOpacity(m,f*([1,.8,.65,.70,.55][j])));
+      s.headline.position.x=2.0+.52*(1-enter);
+      s.credit.position.x=2.05+.18*(1-enter);
+      s.line.scale.x=Math.max(.001,enter*(1-leave));
+      const dolly=lerp(13.7,11.55,seg(v,0,delta));
+      cinemaCam(ctx,t,(index%2?-.2:.18)+Math.sin(v*.25)*.12,0,dolly,(index%2?-.012:.012)*(1-enter));
+      ctx.post.uWhip.value.x+=(index%2?.048:-.048)*(1-enter);
+      ctx.post.uCA.value+=.002*(1-enter);
+      ctx.post.uFlash.value+=.11*soft(v,.03,.10)+(isCraft?.07:0)*soft(v,delta-.3,.13);
+      ctx.post.uZoom.value+=.12*(1-enter);
+    }
+  };
 }
-export function buildDirectorCut(A,cloud) {
-  return [archive(A,cloud),artworks(A),materials(A),editorial(A),machine(A),
-          overload(A),proof(A),creator(A),signature()];
+
+/** All twenty authenticated brand marks, four at a time, no fake labels.
+ *  This is a collaboration list, not a claim that preceding campaigns
+ *  were commissioned by any other client in this section.
+ */
+function clientWall(A) {
+  const g=new THREE.Group();
+  const entries=A.logos.map((tex,i)=>{
+    const group=new THREE.Group();g.add(group);
+    const panel=new THREE.Mesh(new THREE.BoxGeometry(2.42,1.46,.12),
+      new THREE.MeshBasicMaterial({color:tex.userData.needsDarkPanel?0x17253e:0xecf0f6}));
+    group.add(panel);
+    const image=new THREE.Mesh(new THREE.PlaneGeometry(2.25,1.10),
+      new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));
+    pos(image,0,0,.071);group.add(image);
+    const name=txt(CLIENT_NAMES[i],16,C.bone,{mono:true,tracking:.06,anchor:"center"});
+    pos(name,0,-1.12,.24);group.add(name);
+    const bar=makeLine(2.1,.012,C.ember,.52);pos(bar,0,-1.47,.15);group.add(bar);
+    return {group,name,bar};
+  });
+  const heading=txt("GOOD WORK.\nGREAT COMPANY.",137);g.add(heading);pos(heading,-5.4,2.52,.15);
+  const eyebrow=txt("SELECTED COLLABORATIONS  /  20 MARKS",17,C.ember,{mono:true,tracking:.24});
+  g.add(eyebrow);pos(eyebrow,-5.35,3.45,.17);
+  const footer=txt("20 BRANDS  /  05 FRAMES  /  NO SHORTCUTS",15,C.muted,
+    {mono:true,tracking:.18});g.add(footer);pos(footer,-5.35,-3.16,.2);
+  const floor=makeLine(11.4,.023,C.ember,.18);g.add(floor);pos(floor,0,-2.57,-.3);
+  const cardSpan=9/5;
+  return {name:"collaborations-four-at-a-time",start:45,end:54,group:g,
+    update(u,t,ctx) {
+      const row=Math.min(4,Math.floor(u/cardSpan));
+      const v=u-row*cardSpan;
+      const enter=ease.outExpo(seg(v,0,.4));
+      entries.forEach((entry,i)=>{
+        const k=i%4,active=Math.floor(i/4)===row;
+        entry.group.visible=active;
+        if(!active)return;
+        const e=ease.outExpo(seg(v,k*.065,k*.065+.42));
+        const x=(k-1.5)*2.72;
+        entry.group.position.set(x, -.22-(1-e)*1.95, -.2-1.5*(1-e));
+        entry.group.rotation.y=(1-e)*(k%2?-.3:.3)+.015*Math.sin(v*.8+k);
+        entry.group.scale.setScalar(.95+.05*e);
+        setOpacity(entry.name,seg(v,.25+k*.05,.85+k*.05)*(1-seg(v,cardSpan-.24,cardSpan)));
+        entry.bar.scale.x=e;
+      });
+      setOpacity(heading,.9);
+      setOpacity(eyebrow,seg(u,0,.45));
+      setOpacity(footer,seg(u,.8,1.6));
+      cinemaCam(ctx,t,0,0,13.35,.005*Math.sin(u*.4));
+      ctx.post.uFlash.value+=.09*soft(v,.035,.1);
+      ctx.post.uWhip.value.x+=.032*(1-enter)*(row%2?1:-1);
+    }
+  };
 }
-export const DIRECTOR_CUT_SCENES=FILM;
+
+/** A V2-inspired gallery of images transitions into the portfolio's actual
+ *  extruded 3D mark. The final card remains readable for a full 3s. */
+function finalSignature() {
+  const g=new THREE.Group();
+  const mark=makeOfficialMark();g.add(mark);pos(mark,0,1.30,.0);
+  const halo=glowDisc(9);g.add(halo);pos(halo,0,1.1,-2);
+  const a=txt("EDMUNDO KUTUZOV",153,C.bone,{anchor:"center"});
+  g.add(a);pos(a,0,-1.03,.65);
+  const b=txt("ART DIRECTOR  /  MAPUTO  /  MOZAMBIQUE",17,C.ember,
+    {mono:true,anchor:"center",tracking:.16});g.add(b);pos(b,0,-2.02,.61);
+  const c=txt("edmundokutuzov.art",39,C.bone,
+    {mono:true,anchor:"center",tracking:.05});g.add(c);pos(c,0,-2.85,.64);
+  const rule=makeLine(9,.025,C.ember,.9);g.add(rule);pos(rule,0,-1.55,.5);
+  return {name:"official-3d-signature",start:54,end:60,group:g,
+    update(u,t,ctx){
+      const born=ease.outExpo(seg(u,0,1.45));
+      const titleIn=ease.outExpo(seg(u,1,2.35));
+      mark.rotation.set(-.2*(1-born), .65*(1-born)+.1*Math.sin(u*.3), 0);
+      mark.position.z=-3+3*born;
+      mark.scale.setScalar(.25+.75*born);
+      halo.material.opacity=.42*born;
+      setOpacity(a,titleIn);
+      setOpacity(b,seg(u,2,2.7));
+      setOpacity(c,seg(u,2.5,3.2));
+      rule.scale.x=Math.max(.001,ease.outExpo(seg(u,1.8,2.9)));
+      cinemaCam(ctx,t,0,.0,lerp(14,12.6,seg(u,0,4.3)));
+      ctx.post.uFlash.value+=.21*soft(u,.3,.22);
+      ctx.post.uSlitGlow.value=.18*soft(u,1.5,.6);
+      ctx.post.uVig.value=.2;
+    }
+  };
+}
+export function buildDirectorCut(A) {
+  return [
+    openingMark(),
+    projectChapter(A,"human-stories",7.7,14.2,[139]),
+    projectChapter(A,"brand-worlds",14.2,22,[140,142]),
+    projectChapter(A,"digital-culture",22,30,[143,21,50]),
+    projectChapter(A,"culture-and-impact",30,38,[146,145,147]),
+    projectChapter(A,"the-craft",38,45,[80,95,128,134]),
+    clientWall(A),
+    finalSignature()
+  ];
+}
+
