@@ -316,7 +316,32 @@ export class Score {
     this.delay.connect(this.bus);
     this.extra = [this.bus, this.verbSend, verb, this.delay, fb];
     const now = Math.max(offset, 0);
-
+    if (this.version === "v3") {
+      // Original composition: 120 BPM, three drops, deliberate dropouts,
+      // rhythmic material transitions and a second finale.
+      const accents=[3.6,7,14,21,28,38,45,50,56];
+      if(now<3.45)this.rumble(at(now),at(3.45));
+      [1,1.5,2,2.5,2.75,3].forEach(t=>ok(t)&&this.slam(at(t),t===2?1.15:.8));
+      accents.forEach((t,i)=>{if(ok(t))this.impact(at(t),i===0||i===6||i===8);});
+      [[2.8,3.6],[6.1,7],[13,14],[20,21],[27,28],[36.8,38],[49,50],[54.2,56]].forEach(([a,b])=>{if(ok(a))this.riser(at(a),at(b));});
+      for(let k=0;k<240;k++){
+        const t=k*.25;
+        if(!ok(t)||t<3.6||t>=59.5)continue;
+        const beat=k%4===0,half=k%8===0;
+        const quiet=t>=20.65&&t<21.45 || t>=44.45&&t<45.5 || t>=55.4&&t<56.1;
+        if(quiet)continue;
+        const ramp=t<7?.44:t<14?.68:t<21?.82:t<28?.52:t<38?.84:t<45?1:t<50?.47:t<56?.75:.56;
+        const ch=CHORDS[Math.floor(Math.max(0,t-3.6)/4)%4];
+        if(beat)this.kick(at(t),ramp);
+        if(k%8===4)this.clap(at(t),ramp*.73);
+        if(k%2===0)this.hat(at(t),ramp*.7);
+        if(k%4===2)this.sub(at(t),ch[0]-12,ramp*.65);
+        if(k%2===0&&t>=7&&t<56)this.pluck(at(t),ch[k%4]+12,ramp*.57);
+        if(t>=38&&t<45&&k%2===1)this.tick(at(t));
+      }
+      [7,8.75,10.5,12.25,14,15.75,17.5,19.25,21,22.75,24.5,26.25,28,30,32,34,36,38,39,40,41,42,43,44,50,56].forEach(t=>{if(ok(t))this.whoosh(at(t),.35,.58);});
+      for(let t=3.6;t<60;t+=4){const stop=Math.min(60,t+4),ch=CHORDS[Math.round((t-3.6)/4)%4];if(stop>now)this.pad(at(Math.max(t,now)),stop-Math.max(t,now),ch,t>=50?.033:.024,t<28?1000:2200);}
+    } else {
     if (now < 3.45) this.rumble(at(now), at(3.45));
     [0.45, 0.72].forEach((t) => ok(t) && this.kick(at(t), 0.55));
     SLAMS.forEach((t) => ok(t) && this.slam(at(t), t === 2.0 ? 1.2 : 0.9));
@@ -350,6 +375,7 @@ export class Score {
       if (t >= 53 && t < 59 && b % 4 === 0) this.pluck(at(t), [74, 69, 76, 72][(b / 4) % 4], 0.45);
     }
 
+    }
     this.bus.gain.setValueAtTime(1, c.currentTime);
     this.vo.forEach(({ t, buf }) => {
       const end = t + buf.duration;

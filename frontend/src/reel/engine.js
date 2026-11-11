@@ -9,6 +9,8 @@ import { buildCinema, buildCorridor, buildRush } from "./cinema";
 import { buildClients, buildFinale } from "./outro";
 import { Explore } from "./explore";
 import { Score } from "./audio";
+import { buildDirectorCut } from "./directorCut";
+import { buildEditorialStudy } from "./editorialStudy";
 
 const TRANS = [
   { t: 21.0, dir: [0, 0], amt: 0, w: 0.2, flash: 0.25 },
@@ -36,7 +38,9 @@ function makeDust() {
 }
 
 export class ReelEngine {
-  constructor(canvas) {
+  constructor(canvas, version = "v3") {
+    this.version = version;
+    this.duration = version === "v1" ? 52 : DUR;
     this.canvas = canvas;
     const r = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance" });
     r.setPixelRatio(1);
@@ -56,6 +60,7 @@ export class ReelEngine {
     this.hudCam = new THREE.OrthographicCamera(0, W, H, 0, -10, 10);
     this.post = createPost();
     this.score = new Score();
+    this.score.version = version;
     this.t = 0;
     this.playing = false;
     this.recording = false;
@@ -74,7 +79,11 @@ export class ReelEngine {
     const A = this.A;
     this.cloud = new Cloud(A.catalog, A.atlases);
     this.scene.add(this.cloud.group);
-    this.scenes = [buildVoid(A), buildArchive(A, this.cloud), buildCinema(A), buildCorridor(A), buildRush(A), buildClients(A), buildFinale(A, this.cloud)];
+    this.scenes = this.version === "v3"
+      ? [buildVoid(A), ...buildDirectorCut(A, this.cloud)]
+      : this.version === "v1"
+        ? buildEditorialStudy(A)
+        : [buildVoid(A), buildArchive(A, this.cloud), buildCinema(A), buildCorridor(A), buildRush(A), buildClients(A), buildFinale(A, this.cloud)];
     this.scenes.forEach((s) => {
       if (s.group) this.scene.add(s.group);
       if (s.hud) this.hud.add(s.hud);
@@ -97,11 +106,11 @@ export class ReelEngine {
         return;
       }
       let t = this.score.time();
-      if (t >= DUR) {
+      if (t >= this.duration) {
         this.pause();
-        this.t = DUR;
-        this.renderFrame(DUR - 0.001);
-        this.onTime && this.onTime(DUR);
+        this.t = this.duration;
+        this.renderFrame(this.duration - 0.001);
+        this.onTime && this.onTime(this.duration);
         this.onEnd && this.onEnd();
         return;
       }
@@ -143,7 +152,7 @@ export class ReelEngine {
     P.uTime.value = t;
     this.cloud.group.visible = false;
     this.scenes.forEach((s) => {
-      const on = t >= s.start && (t < s.end || (s.end === DUR && t <= DUR));
+      const on = t >= s.start && (t < s.end || (s.end === this.duration && t <= this.duration));
       if (s.active && !on && s.leave) s.leave();
       s.active = on;
       if (s.group) s.group.visible = on;
@@ -194,20 +203,20 @@ export class ReelEngine {
   async play() {
     if (this.mode !== "reel") this.setMode("reel");
     if (this.score.ctx.state !== "running") await this.score.ctx.resume();
-    const from = this.t >= DUR - 0.05 ? 0 : this.t;
+    const from = this.t >= this.duration - 0.05 ? 0 : this.t;
     this.score.start(from);
     this.playing = true;
   }
 
   pause() {
-    if (this.playing) this.t = Math.min(DUR, Math.max(0, this.score.time()));
+    if (this.playing) this.t = Math.min(this.duration, Math.max(0, this.score.time()));
     this.score.stop();
     this.playing = false;
     this.renderFrame(this.t);
   }
 
   seek(t) {
-    this.t = Math.min(DUR, Math.max(0, t));
+    this.t = Math.min(this.duration, Math.max(0, t));
     if (this.playing) this.score.start(this.t);
     else this.renderFrame(this.t);
     this.onTime && this.onTime(this.t);
@@ -230,7 +239,7 @@ export class ReelEngine {
     this.seek(0);
     const prevEnd = this.onEnd;
     const ended = new Promise((res) => { this.onEnd = res; });
-    const iv = setInterval(() => onProgress && onProgress(this.t / DUR), 200);
+    const iv = setInterval(() => onProgress && onProgress(this.t / this.duration), 200);
     try {
       rec.start(500);
       await this.play();
@@ -253,6 +262,7 @@ export class ReelEngine {
     cancelAnimationFrame(this.raf);
     this.score.stop();
     this.score.ctx.close();
+    this.rt.dispose();
     this.renderer.dispose();
   }
 }

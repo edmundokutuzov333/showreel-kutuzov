@@ -20,8 +20,16 @@ export default function handler(req, res) {
   const lang = req.query?.lang || "en";
   if (!LINES[lang]) return res.status(404).json({ detail: "Unknown language" });
   res.setHeader("Cache-Control", "public, max-age=3600");
+  const version = ["v1","v2","v3"].includes(req.query?.version) ? req.query.version : "v2";
+  // V3 keeps copy sparse. Selected samples are spoken by the original voice
+  // recordings at their source indices, ensuring sound and captions agree.
+  const indices = version === "v3" ? [2,9,10] : Array.from({length:11},(_,i)=>i);
+  const cues = version === "v3" ? [8,51,57.4] : TIMES;
   return res.status(200).json({
-    lang, voice: "onyx", model: "tts-1-hd",
-    lines: LINES[lang].map((text, i) => ({ i, t: TIMES[i], text, url: `/api/reel/vo/${lang}/${i}.mp3` }))
+    lang, version, voice:"onyx", model:"tts-1-hd",
+    lines: indices.map((idx,i)=>({
+      i, t:cues[i], text:LINES[lang][idx],
+      url:`/api/reel/vo/${lang}/${idx}.mp3`
+    }))
   });
 }

@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import { SCENES, fmt } from "@/reel/storyboard";
 
-const DUR = 60;
 
-export default function Timeline({ time, onSeek, disabled }) {
+
+export default function Timeline({ time, duration = 60, onSeek, disabled }) {
+  const DUR = duration;
   const ref = useRef(null);
   const toTime = (e) => {
     const r = ref.current.getBoundingClientRect();
@@ -28,7 +29,7 @@ export default function Timeline({ time, onSeek, disabled }) {
         className={`relative flex-1 h-9 select-none ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-ew-resize"}`}
       >
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex gap-[3px] h-[22px]">
-          {SCENES.map((s) => (
+          {(DUR === 52 ? [{ from: 0, to: 52, label: "V1 Editorial" }] : SCENES).map((s) => (
             <div key={s.label} style={{ width: `${((s.to - s.from) / DUR) * 100}%` }} className="relative h-full bg-white/[0.05] hover:bg-white/[0.09] transition-colors duration-200 overflow-hidden">
               <div className="absolute inset-y-0 left-0 bg-[rgba(68,102,255,0.45)]" style={{ width: `${Math.min(100, Math.max(0, ((time - s.from) / (s.to - s.from)) * 100))}%` }} />
               <span className="absolute left-1.5 top-1/2 -translate-y-1/2 font-mono text-[9px] tracking-[0.2em] uppercase text-white/55 whitespace-nowrap">{s.label}</span>

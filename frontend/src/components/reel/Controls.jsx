@@ -23,7 +23,7 @@ export default function Controls({ r, onFullscreen }) {
           {r.playing ? "Pausa" : "Play"}
         </button>
         <IconBtn testid="restart-button" onClick={r.restart} disabled={!r.ready || busy} label="Recomeçar"><RotateCcw size={16} /></IconBtn>
-        <div className="w-full md:w-auto md:flex-1 min-w-0"><Timeline time={r.time} onSeek={r.seek} disabled={!r.ready || busy} /></div>
+        <div className="w-full md:w-auto md:flex-1 min-w-0"><Timeline time={r.time} duration={r.duration} onSeek={r.seek} disabled={!r.ready || busy} /></div>
       </div>
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ export default function Controls({ r, onFullscreen }) {
           <button data-testid="export-video-button" onClick={r.exportVideo} disabled={!r.ready || busy}
             className="h-11 px-5 rounded-full bg-[var(--primary)] text-white font-mono text-[11px] tracking-[0.22em] uppercase flex items-center gap-2 hover:bg-[#5a78ff] transition-colors duration-200 disabled:opacity-50">
             {busy ? <Circle size={12} className="fill-red-500 text-red-500 animate-pulse" /> : <Download size={15} />}
-            {busy ? `A gravar ${Math.round(r.recording * 100)}%` : "Exportar vídeo 1080p"}
+            {busy ? `A gravar ${Math.round(r.recording * 100)}%` : "Exportar 1080p"}
           </button>
         </div>
       </div>
