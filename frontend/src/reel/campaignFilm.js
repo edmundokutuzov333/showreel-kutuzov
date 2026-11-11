@@ -128,15 +128,15 @@ function campaign(A,c,i){
    group.add(sub);batches.push({sub,pieces});
  }
  const title=text(group,c.title,78,{maxW:10.7,maxH:.76});
- P(title,-5.48,2.62,1.3);
+ P(title,-5.48,2.49,1.3);
  const eyebrow=text(group,"CAMPAIGN DESIGN   /   "+String(i+1).padStart(2,"0")+" OF 06",
    16,{mono:true,color:C.ember,maxW:8,maxH:.24});
- P(eyebrow,-5.48,3.17,1.3);
+ P(eyebrow,-5.48,2.93,1.3);
  const credit=text(group,c.client,21,{mono:true,maxW:5,maxH:.37});
- P(credit,-5.48,-3.12,1.3);
+ P(credit,-5.48,-2.87,1.3);
  const counter=text(group,String(c.count).padStart(2,"0")+" ARTWORKS",16,
    {mono:true,color:C.ember,anchor:"right",maxW:3.8,maxH:.26});
- P(counter,5.48,-3.12,1.3);
+ P(counter,5.48,-2.87,1.3);
  const rule=line(group,11.1,0,2.25,.25);
  const dur=c.end-c.start,span=dur/batches.length;
  return {name:"campaign-"+c.slug,start:c.start,end:c.end,group,
@@ -188,10 +188,10 @@ function category(A,c){
    new THREE.MeshBasicMaterial({color:C.bg,transparent:true,opacity:.82,depthWrite:false}));
  P(bar,0,-2.88,.3);g.add(bar);
  const title=text(g,c.name,129,{maxW:10.9,maxH:.88});
- P(title,-5.50,-2.85,1.25);
+ P(title,-5.50,-2.55,1.25);
  const eyebrow=text(g,"SELECTED CREATIVE PRACTICE",16,
    {mono:true,color:C.ember,maxW:8.2,maxH:.25});
- P(eyebrow,-5.48,3.10,1.25);
+ P(eyebrow,-5.48,2.91,1.25);
  const progress=line(g,10.9,0,-3.48,.55);
  const batches=Math.ceil(slots.length/3),span=d/batches;
  return {name:"category-"+c.name.toLowerCase().replace(/[^a-z]+/g,"-"),
@@ -290,7 +290,7 @@ function finale(){
    g.add(m);P(m,0,0,-1.7-i*.3);return m;
  });
  const url=text(g,"edmundokutuzov.art",38,{mono:true,anchor:"center",maxW:6.1,maxH:.48});
- P(url,0,-2.91,1.5);
+ P(url,0,-2.58,1.5);
  const bar=line(g,10.8,0,-3.29,.65);
  return {name:"ek-3d-motion-signature",start:52.5,end:60,group:g,
    update(u,t,ctx){
@@ -315,7 +315,7 @@ function finale(){
        r.material.opacity=.075+.045*Math.sin(u*3+i)**2;
      });
      setOpacity(url,seg(u,2.5,3.4));
-     url.position.y=-2.90+.05*Math.sin(u*1.9);
+     url.position.y=-2.58+.05*Math.sin(u*1.9);
      bar.scale.x=.06+.94*seg(u,1.6,3.1);
      camera(ctx,t,12.5-.45*seg(u,0,3)+.27*Math.sin(u*.65));
      ctx.post.uSlitGlow.value=.12+.1*Math.sin(u*1.2)**2;
