@@ -7,7 +7,7 @@ import Storyboard from "@/components/reel/Storyboard";
 const VERSIONS = [
   {id:"v1", label:"Versão 1", sub:"Editorial · reconstrução", desc:"Homenagem programada ao Motion V1 de 52 segundos. O MP4 histórico não está neste repositório."},
   {id:"v2", label:"Versão 2", sub:"Original · arquivo 3D", desc:"A experiência interactiva original preservada: galáxia, campanhas, clientes e assinatura."},
-  {id:"v3", label:"Versão 3", sub:"The Campaign Cut · 40 artes", desc:"Seis campanhas completas em cortes rápidos. Depois, cinco categorias, 20 marcas com as quais já trabalhei e o monograma EK original em movimento."}
+  {id:"v3", label:"Versão 3", sub:"Final Cut · V2 restored", desc:"Intro, galáxia e índice originais da V2. Seis campanhas sem duplicações, quatro categorias em trios, 20 marcas e uma assinatura EK 3D mais cinemática."}
 ];
 
 export default function ReelStudio() {
@@ -52,13 +52,14 @@ export default function ReelStudio() {
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}
         {r.version==="v3"&&<div className="max-w-[1180px] mx-auto mt-20">
           <section aria-label="Capítulos do filme" className="border-t border-white/15 pt-8">
-            <p className="font-mono text-[10px] text-[#9cc6f5] tracking-[.3em] uppercase">THE CAMPAIGN CUT / 60 SECONDS</p>
+            <p className="font-mono text-[10px] text-[#9cc6f5] tracking-[.3em] uppercase">THE FINAL CUT / V2 OPENING / 60 SECONDS</p>
             <div className="mt-3 flex flex-wrap justify-between gap-4 items-end">
               <h2 className="font-display text-2xl md:text-4xl font-bold">Every frame has a purpose.</h2>
-              <span className="font-mono text-[10px] text-white/45">06 CAMPAIGNS / 40 ARTWORKS / 20 BRANDS</span>
+              <span className="font-mono text-[10px] text-white/45">06 CAMPAIGNS / 38 UNIQUE ARTWORKS / 20 BRANDS</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
-              {[[0,"THE BREACH"],[3.8,"CAMPAIGNS"],[23,"VISUAL PRACTICE"],[41,"BRANDS"],[52.5,"3D SIGNATURE"]].map(([time,heading],i)=>
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mt-8">
+              {[[0,"V2 INTRO"],[3.6,"GALAXY"],[13.8,"INDEX"],[21,"CAMPAIGNS"],
+                [34.2,"VISUAL PRACTICE"],[45,"BRANDS"],[53.5,"EK 3D"]].map(([time,heading],i)=>
                 <button type="button" key={heading} onClick={()=>r.seek(time)}
                   className="text-left border-t border-white/20 hover:border-[#9cc6f5] pt-4 pb-2 transition-colors group">
                   <span className="font-mono text-[10px] text-white/45">0{i+1} / {time.toFixed(1)}s</span>
@@ -68,15 +69,15 @@ export default function ReelStudio() {
           </section>
           <section aria-label="As seis campanhas" className="border-t border-white/15 mt-16 pt-8">
             <p className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">CAMPAIGN DESIGN / COMPLETE COLLECTIONS</p>
-            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">One campaign. Every application.</h2>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Six campaigns. No repeats.</h2>
             <div className="grid md:grid-cols-2 gap-3 mt-8">
               {[
-                ["icor-depressao","A Depressão é Real","ICOR",14,3.8],
-                ["diga-yes","Diga YES & Viva o Mundo Online","WEBMASTERS",9,7],
-                ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",1,10.2],
-                ["agua-e-vida","Água é Vida e Você é 100% Água","FONTE FRESCA",3,13.4],
-                ["super-mares","Viva a Experiência no Super Marés","SUPER MARÉS",7,16.6],
-                ["we-are-giz","We Are GIZ","GIZ",6,19.8],
+                ["icor-depressao","A Depressão é Real","ICOR",12,21],
+                ["diga-yes","Diga YES & Viva o Mundo Online","WEBMASTERS",9,23.2],
+                ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",1,25.4],
+                ["agua-e-vida","Água é Vida e Você é 100% Água","FONTE FRESCA",3,27.6],
+                ["super-mares","Viva a Experiência no Super Marés","SUPER MARÉS",7,29.8],
+                ["we-are-giz","We Are GIZ","GIZ",6,32],
               ].map(([slug,title,client,count,start],i)=>
                 <button key={slug} type="button" onClick={()=>r.seek(start)}
                   className="group border border-white/10 hover:border-[#9cc6f5]/75 bg-white/[.028] text-left overflow-hidden transition-colors">
@@ -111,10 +112,10 @@ export default function ReelStudio() {
           </section>
           <section aria-label="Categorias do portfólio" className="border-t border-white/15 mt-16 pt-8">
             <p className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">BEYOND CAMPAIGNS</p>
-            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Creative practice, not labels.</h2>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Three at a time. Never twice.</h2>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-7">
-              {[[23,"SOCIAL MEDIA"],[26.6,"MANIPULATION"],[30.2,"SOME DEZAINES+"],
-                [33.8,"VIDEO"],[37.4,"CAMPAIGN DESIGN"]].map(([time,name],i)=>
+              {[[34.2,"SOCIAL MEDIA"],[36.9,"MANIPULATION"],[39.6,"SOME DEZAINES+"],
+                [42.3,"VIDEO"]].map(([time,name],i)=>
                 <button key={name} type="button" onClick={()=>r.seek(time)}
                   className="border border-white/15 hover:border-[#9cc6f5] bg-white/[.025] p-5 text-left transition-colors">
                   <span className="block font-mono text-[10px] text-white/40">0{i+1} / {time.toFixed(1)}s</span>
@@ -122,7 +123,7 @@ export default function ReelStudio() {
                 </button>)}
             </div>
             <p className="font-mono text-[10px] text-white/40 leading-relaxed mt-5">
-              Apenas as campanhas têm títulos individuais. Os outros trabalhos são apresentados por categoria.
+              Apenas as campanhas têm títulos individuais. Os outros trabalhos surgem em conjuntos de três, sem repetir artes.
               As 20 marcas identificam colaborações profissionais, não atribuições das campanhas anteriores.
             </p>
           </section>

@@ -80,7 +80,7 @@ export class ReelEngine {
     this.cloud = new Cloud(A.catalog, A.atlases);
     this.scene.add(this.cloud.group);
     this.scenes = this.version === "v3"
-      ? buildCampaignFilm(A)
+      ? buildCampaignFilm(A,this.cloud)
       : this.version === "v1"
         ? buildEditorialStudy(A)
         : [buildVoid(A), buildArchive(A, this.cloud), buildCinema(A), buildCorridor(A), buildRush(A), buildClients(A), buildFinale(A, this.cloud)];

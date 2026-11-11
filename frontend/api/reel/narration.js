@@ -24,7 +24,7 @@ export default function handler(req, res) {
   // V3 keeps copy sparse. Selected samples are spoken by the original voice
   // recordings at their source indices, ensuring sound and captions agree.
   const indices = version === "v3" ? [2,8,10] : Array.from({length:11},(_,i)=>i);
-  const cues = version === "v3" ? [4.4,27.0,55.0] : TIMES;
+  const cues = version === "v3" ? [3.7,35.0,55.1] : TIMES;
   return res.status(200).json({
     lang, version, voice:lang === "pt" ? "pt-PT/tugao" : "en-US/joe", model:"piper-medium/pre-rendered",
     lines: indices.map((idx,i)=>({

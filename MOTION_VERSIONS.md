@@ -46,3 +46,20 @@ The current V3 is implemented in `frontend/src/reel/campaignFilm.js` and uses an
 Timeline: 0–3.8s official EK/portal inspired by the portfolio site opening; 3.8–23s six galleries in 3.2s dynamic multi-art bursts; 23–41s category-led Social Media, Manipulation, Some Dezaines+, Video, Campaign Design; 41–52.5s the 20 real logos in groups of four with explicit description **brands I've worked with / marcas com as quais já trabalhei**; 52.5–60s continuously animated original three-dimensional EK mark with no full-name text. The off-camera narration now uses three existing samples at 4.4/27/55s, with the spoken name removed from the outro. V1 and V2 scene code is unchanged.
 
 Text planes are scaled to capped safe widths before placement. Validate edge clipping at actual canvas resolution and all timecodes; browser realtime video export remains distinct from a frame-accurate offline master.
+
+
+### Final V3 revision (2026-11-11)
+V3 now starts by calling the **literal original V2** buildVoid() at 0–3.6 s
+and buildArchive(A, cloud) at 3.6–21 s (galaxy + filter index). V2 itself
+is unchanged. From 21–34.2 s six published galleries use animated
+editorial asymmetric layouts rather than a fixed grid. Two repeated ICOR
+visuals in the published 14-file gallery are omitted (indices 11 and 13);
+the full source gallery remains stored, and 38 unique campaign designs
+are shown. From 34.2–45 s only Social Media, Manipulation, Some Dezaines+
+and Video appear in complete sets of three unique artworks per shot.
+From 45–53.5 s, all twenty original brand marks use an identical neutral
+dark-navy background system. From 53.5–60 s the real EK extrusion moves
+continuously with larger scale, faster 3D spin, animated light rigs, more
+reactive rings, orbital camera movement and 72 kinetic particles.
+No full-name text appears in the outro. Creative categories do not
+repeat published campaign visual IDs or individual artwork slugs.

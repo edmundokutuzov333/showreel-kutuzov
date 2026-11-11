@@ -4,38 +4,38 @@ import {
   glowTexture, setOpacity, setCam, shake, makeTiles
 } from "./core";
 import { makeOfficialMark } from "./brandMark";
+import { buildVoid } from "./intro";
+import { buildArchive } from "./archive";
 
 /**
  * THE CAMPAIGN CUT — exact gallery assets from the portfolio website.
  * Timings are absolute and seekable. No artificial stand-in campaign images.
  */
 export const CAMPAIGNS=[
-  {slug:"icor-depressao",title:"A DEPRESSÃO É REAL",client:"ICOR",count:14,start:3.8,end:7},
-  {slug:"diga-yes",title:"DIGA YES & VIVA O MUNDO ONLINE",client:"WEBMASTERS",count:9,start:7,end:10.2},
-  {slug:"cozinhar-arte",title:"COZINHAR É ARTE",client:"PEMBE MOZ",count:1,start:10.2,end:13.4},
-  {slug:"agua-e-vida",title:"ÁGUA É VIDA E VOCÊ É 100% ÁGUA",client:"FONTE FRESCA",count:3,start:13.4,end:16.6},
-  {slug:"super-mares",title:"VIVA A EXPERIÊNCIA NO SUPER MARÉS",client:"SUPER MARÉS",count:7,start:16.6,end:19.8},
-  {slug:"we-are-giz",title:"WE ARE GIZ",client:"GIZ",count:6,start:19.8,end:23}
+ {slug:"icor-depressao",title:"A DEPRESSÃO É REAL",client:"ICOR",count:14,exclude:[11,13],start:21,end:23.2},
+ {slug:"diga-yes",title:"DIGA YES & VIVA O MUNDO ONLINE",client:"WEBMASTERS",count:9,exclude:[],start:23.2,end:25.4},
+ {slug:"cozinhar-arte",title:"COZINHAR É ARTE",client:"PEMBE MOZ",count:1,exclude:[],start:25.4,end:27.6},
+ {slug:"agua-e-vida",title:"ÁGUA É VIDA E VOCÊ É 100% ÁGUA",client:"FONTE FRESCA",count:3,exclude:[],start:27.6,end:29.8},
+ {slug:"super-mares",title:"VIVA A EXPERIÊNCIA NO SUPER MARÉS",client:"SUPER MARÉS",count:7,exclude:[],start:29.8,end:32},
+ {slug:"we-are-giz",title:"WE ARE GIZ",client:"GIZ",count:6,exclude:[],start:32,end:34.2}
 ];
 export const CATEGORIES=[
-  {name:"SOCIAL MEDIA",start:23,end:26.6,ids:[21,23,26,29,37,43,50,54,57,59]},
-  {name:"MANIPULATION",start:26.6,end:30.2,ids:[96,99,101,105,110,113,117,123,127]},
-  {name:"SOME DEZAINES+",start:30.2,end:33.8,ids:[71,72,73,77,80,89,94,95,132,134]},
-  {name:"VIDEO",start:33.8,end:37.4,ids:[148,149,150,151,152,153,154],video:true},
-  {name:"CAMPAIGN DESIGN",start:37.4,end:41,ids:[141,144,147,139,140,142,143,145,146]}
+ {name:"SOCIAL MEDIA",start:34.2,end:36.9,ids:[21,23,26,37,43,50,54,57,59]},
+ {name:"MANIPULATION",start:36.9,end:39.6,ids:[96,99,101,105,110,113,117,123,127]},
+ {name:"SOME DEZAINES+",start:39.6,end:42.3,ids:[71,72,73,77,80,89,94,132,134]},
+ {name:"VIDEO",start:42.3,end:45,ids:[148,149,150,151,152,153],video:true}
 ];
 export const BRAND_NAMES=[
  "ABSA","TOYOTA","NISSAN","HYUNDAI","GALP","TOTALENERGIES",
  "VODACOM","RONIL AUTO","PERNOD RICARD","GIZ","MULTICHOICE","KITKAT",
- "FLYING FISH","BRUTAL FRUIT","JOAQUIM CHAVES","PONTA APART",
+ "FLYING FISH","BRUTAL FRUIT","JOAQUIM CHAVES SAÚDE","PONTA APART",
  "HOTEL CARDOSO","EMOSE","MCS","PROMAR"
 ];
 export const CAMPAIGN_FILM_SCENES=[
-  ["THE PORTAL",0,3.8],
-  ...CAMPAIGNS.map(c=>[c.title,c.start,c.end]),
-  ...CATEGORIES.map(c=>[c.name,c.start,c.end]),
-  ["BRANDS I HAVE WORKED WITH",41,52.5],
-  ["EK 3D SIGNATURE",52.5,60]
+ ["V2 INTRO",0,3.6],["V2 GALAXY & INDEX",3.6,21],
+ ...CAMPAIGNS.map(c=>[c.title,c.start,c.end]),
+ ...CATEGORIES.map(c=>[c.name,c.start,c.end]),
+ ["BRANDS I'VE WORKED WITH",45,53.5],["EK 3D",53.5,60]
 ];
 const easePop=ease.outExpo;
 const pulse=(v,a,w=.13)=>Math.exp(-Math.pow((v-a)/w,2));
@@ -69,108 +69,89 @@ function camera(ctx,t,z=12.65,x=0,y=0){
  * Portfolio-inspired abyss portal, energy slit, warp trails and a true
  * 3D extrusion of the three original EK logo paths.
  */
-function opening(){
- const g=new THREE.Group(),mark=makeOfficialMark();g.add(mark);
- const aura=glow(g,11);P(aura,0,0,-3);
- const slit=line(g,.035,0,0,.95);slit.scale.y=200;
- const upper=new THREE.Mesh(new THREE.PlaneGeometry(20,7),
-   new THREE.MeshBasicMaterial({color:C.bg,depthWrite:false}));
- const lower=upper.clone();g.add(upper,lower);
- const title=text(g,"A POINT OF VIEW",118,{anchor:"center",maxW:9.6,maxH:.9});
- P(title,0,-2.2,1.6);
- const subtitle=text(g,"CAMPAIGN DESIGN  /  CULTURE  /  MOTION",16,
-   {mono:true,anchor:"center",color:C.ember,maxW:9,maxH:.26});
- P(subtitle,0,-2.85,1.7);
- const trails=Array.from({length:72},(_,i)=>{
-   const m=makeLine(.72,.014,i%4?C.ember:C.primary,.27);
-   m.rotation.z=i*2.39996;g.add(m);return m;
- });
- return {name:"official-logo-portal",start:0,end:3.8,group:g,
-   update(u,t,ctx){
-     const enter=easePop(seg(u,.3,2.4)),breach=ease.inExpo(seg(u,2.95,3.77));
-     upper.position.y=5.4+3.6*enter;lower.position.y=-5.4-3.6*enter;
-     mark.position.set(.26*breach,.11*Math.sin(u*2.0),-3.1+4.6*enter+7.1*breach);
-     mark.rotation.set(.11*Math.sin(u*1.9),.95*(1-enter)+.21*Math.sin(u*2.15),.04*Math.cos(u*1.5));
-     mark.scale.setScalar(.28+.85*enter+1.45*breach);
-     mark.userData.key.position.set(-4*Math.cos(u*1.6),3.2,4.0);
-     mark.userData.rim.position.set(4*Math.sin(u*1.7),-2.2,2.0);
-     aura.material.opacity=.35+.25*enter+.35*breach;
-     aura.scale.setScalar(.65+enter*.42+breach*2.5);
-     slit.scale.x=.1+enter*13+breach*24;slit.material.opacity=.76*(1-breach);
-     trails.forEach((m,i)=>{
-       const a=i*2.39996,r=1.2+(i%11)*.48;
-       P(m,r*Math.cos(a)*(.7+breach*2),r*Math.sin(a)*(.6+breach*2),-.7+(i%9)*.1);
-       m.scale.x=.32+breach*6;m.material.opacity=.08+.4*breach;
-     });
-     setOpacity(title,seg(u,1.0,1.5)*(1-seg(u,2.8,3.3)));
-     setOpacity(subtitle,seg(u,1.4,1.9)*(1-seg(u,2.8,3.3)));
-     camera(ctx,t,12.8);
-     ctx.post.uZoom.value+=.12*breach;
-     ctx.post.uSlitGlow.value=.3*enter;
-     ctx.post.uFlash.value+=.80*pulse(u,3.74,.16);
-   }
- };
+/* Editorial compositions, never the previous rigid grid. */
+function layout(n,style,beat){
+  const mirror=style%2?-1:1;
+  if(n===1)return [{x:0,y:-.1,h:5.0,w:9.2,r:0,z:.24}];
+  if(n===2)return [
+    {x:-2.28,y:.08,h:4.6,w:5.4,r:-.067,z:.22},
+    {x:2.38,y:-.14,h:4.4,w:5.1,r:.072,z:-.16}];
+  if(n===3){
+    if((style+beat)%3===0)return [
+      {x:-2.27*mirror,y:-.11,h:4.5,w:6.15,r:-.055*mirror,z:.3},
+      {x:3.42*mirror,y:1.13,h:2.03,w:3.16,r:.095*mirror,z:-.16},
+      {x:3.24*mirror,y:-1.24,h:2.08,w:3.25,r:-.075*mirror,z:-.06}];
+    return [
+      {x:-3.50,y:.11,h:3.62,w:3.39,r:-.1,z:-.20},
+      {x:0,y:-.11,h:4.45,w:4.08,r:.047,z:.18},
+      {x:3.48,y:.21,h:3.72,w:3.43,r:.09,z:-.10}];
+  }
+  return [
+    {x:-2.22*mirror,y:-.08,h:4.65,w:6.25,r:-.042*mirror,z:.24},
+    {x:3.39*mirror,y:1.47,h:1.29,w:3.02,r:.11*mirror,z:-.18},
+    {x:3.51*mirror,y:.0,h:1.31,w:3.07,r:-.06*mirror,z:-.07},
+    {x:3.35*mirror,y:-1.45,h:1.30,w:3.08,r:.085*mirror,z:.05}];
 }
-const GRID=[
- [0,-.18,4.25,5.45],[-4.45,1.02,2.12,2.55],
- [4.45,1.02,2.12,2.55],[-4.45,-1.40,2.10,2.55],[4.45,-1.40,2.10,2.55]
-];
 /** Gallery montage: 14 images -> 3 bursts; 9 -> 2; 1 -> one authentic artwork. */
 function campaign(A,c,i){
- const tex=A.campaigns?.[c.slug]||[];
- if(tex.length!==c.count)throw Error("Original gallery missing for "+c.slug);
- const group=new THREE.Group(),batches=[];
- for(let k=0;k<tex.length;k+=5){
-   const sub=new THREE.Group(),pieces=tex.slice(k,k+5).map((texture,j)=>{
-     const [x,y,h,w]=GRID[j],mesh=slab(texture,h,w);
-     mesh.userData.target=[x,y];sub.add(mesh);return mesh;
+ const all=A.campaigns[c.slug]||[];
+ if(all.length!==c.count)throw Error("Original gallery missing "+c.slug);
+ const textures=all.filter((_,index)=>!c.exclude.includes(index));
+ const g=new THREE.Group(),batches=[];
+ for(let offset=0;offset<textures.length;offset+=4){
+   const group=new THREE.Group();
+   const chunk=textures.slice(offset,offset+4);
+   const poses=layout(chunk.length,i,Math.floor(offset/4));
+   const objects=chunk.map((tex,j)=>{
+      const p=poses[j],mesh=slab(tex,p.h,p.w);
+      mesh.userData.pose=p;group.add(mesh);return mesh;
    });
-   group.add(sub);batches.push({sub,pieces});
+   g.add(group);batches.push({group,objects});
  }
- const title=text(group,c.title,78,{maxW:10.7,maxH:.76});
- P(title,-5.48,2.49,1.3);
- const eyebrow=text(group,"CAMPAIGN DESIGN   /   "+String(i+1).padStart(2,"0")+" OF 06",
-   16,{mono:true,color:C.ember,maxW:8,maxH:.24});
- P(eyebrow,-5.48,2.93,1.3);
- const credit=text(group,c.client,21,{mono:true,maxW:5,maxH:.37});
- P(credit,-5.48,-2.87,1.3);
- const counter=text(group,String(c.count).padStart(2,"0")+" ARTWORKS",16,
-   {mono:true,color:C.ember,anchor:"right",maxW:3.8,maxH:.26});
- P(counter,5.48,-2.87,1.3);
- const rule=line(group,11.1,0,2.25,.25);
- const dur=c.end-c.start,span=dur/batches.length;
- return {name:"campaign-"+c.slug,start:c.start,end:c.end,group,
+ const headline=text(g,c.title,78,{maxW:10.55,maxH:.70});
+ P(headline,-5.32,2.41,1.48);
+ const step=text(g,"CAMPAIGN "+String(i+1).padStart(2,"0")+" / 06",16,
+   {mono:true,color:C.ember,maxW:8,maxH:.24});
+ P(step,-5.32,2.77,1.48);
+ const client=text(g,c.client,19,{mono:true,maxW:5,maxH:.30});
+ P(client,-5.32,-2.80,1.48);
+ const cnt=text(g,String(textures.length).padStart(2,"0")+" UNIQUE ARTWORKS",15,
+   {mono:true,color:C.ember,anchor:"right",maxW:4.0,maxH:.24});
+ P(cnt,5.32,-2.80,1.48);
+ const rule=line(g,10.9,0,2.18,.30);
+ const haze=glow(g,11);P(haze,0,0,-3.2);
+ const total=c.end-c.start,beatDuration=total/batches.length;
+ return {name:"campaign-"+c.slug,start:c.start,end:c.end,group:g,
   update(u,t,ctx){
-    const batch=Math.min(batches.length-1,Math.floor(u/span));
-    const v=u-batch*span;
-    batches.forEach((b,j)=>b.sub.visible=j===batch);
-    const current=batches[batch];
-    const show=easePop(seg(v,0,.26));
-    current.pieces.forEach((m,j)=>{
-      const [x,y]=m.userData.target;
-      const enter=easePop(seg(v,j*.035,j*.035+.31));
-      const leave=ease.inExpo(seg(v,span-.20,span));
-      P(m,x+(1-enter)*(j%2?.75:-.75)+leave*(j%2?1:-1),
-        y+(1-enter)*(j%2?-.65:.65),-.1+j*.075+leave*.8);
-      m.rotation.y=(1-enter)*(j%2?-.35:.35)+leave*(j%2?.25:-.25);
-      m.rotation.z=.015*Math.sin(v*1.7+j);
-      m.scale.setScalar(.96+.04*enter);
+    const beat=Math.min(batches.length-1,Math.floor(u/beatDuration));
+    const v=u-beat*beatDuration;
+    batches.forEach((b,j)=>b.group.visible=j===beat);
+    batches[beat].objects.forEach((mesh,j)=>{
+      const p=mesh.userData.pose,sign=j%2?-1:1;
+      const arrive=easePop(seg(v,j*.03,.20+j*.03));
+      const leave=ease.inExpo(seg(v,beatDuration-.12,beatDuration));
+      P(mesh,p.x+(1-arrive)*sign*1.25+leave*sign*.35,
+       p.y+(1-arrive)*sign*.88,p.z+1.45*(1-arrive)+leave*.34);
+      mesh.rotation.y=(1-arrive)*sign*.35+leave*sign*.17;
+      mesh.rotation.z=p.r+(1-arrive)*sign*.09;
+      mesh.scale.setScalar(.97+.03*arrive);
     });
-    if(c.count===1){
-      const one=current.pieces[0];
-      one.rotation.y=.16*Math.sin(u*2.4);one.rotation.z=.035*Math.sin(u*2.0);
-      one.scale.setScalar(1+.065*Math.sin(u*2.9));
+    if(textures.length===1){
+      const hero=batches[0].objects[0];
+      hero.rotation.y=.16*Math.sin(u*2.45);
+      hero.rotation.z=.038*Math.sin(u*1.9);
+      hero.scale.setScalar(1+.058*Math.sin(u*2.7));
     }
-    const fadeIn=seg(u,.05,.28),fadeOut=1-seg(u,dur-.32,dur);
-    setOpacity(title,fadeIn*fadeOut);
-    setOpacity(eyebrow,fadeIn*fadeOut);
-    setOpacity(credit,seg(u,.18,.42)*fadeOut);
-    setOpacity(counter,seg(u,.18,.42)*fadeOut);
-    rule.scale.x=.03+.97*seg(u,.15,.6);
-    camera(ctx,t,12.8-.38*seg(v,0,span),.1*Math.sin(u*1.1));
-    ctx.post.uFlash.value+=.10*pulse(v,0,.07);
-    ctx.post.uWhip.value.x+=(batch%2?.015:-.015)*(1-show);
-    ctx.post.uCA.value+=.0008*(1-show);
+    const intro=seg(u,.035,.20),out=1-seg(u,total-.16,total);
+    setOpacity(headline,intro*out);setOpacity(step,intro*out);
+    setOpacity(client,seg(u,.08,.30)*out);
+    setOpacity(cnt,seg(u,.08,.30)*out);
+    rule.scale.x=.06+.94*seg(u,.12,.47);
+    haze.material.opacity=.2+.15*Math.sin(t*3.8)**2;
+    haze.rotation.z=.08*Math.sin(t*.9);
+    camera(ctx,t,12.75-.25*seg(v,0,beatDuration),.08*Math.sin(t*1.3));
+    ctx.post.uFlash.value+=.12*pulse(v,0,.08);
+    ctx.post.uWhip.value.x+=(i%2?.018:-.018)*(1-seg(v,0,.22));
   }
  };
 }
@@ -193,7 +174,8 @@ function category(A,c){
    {mono:true,color:C.ember,maxW:8.2,maxH:.25});
  P(eyebrow,-5.48,2.91,1.25);
  const progress=line(g,10.9,0,-3.48,.55);
- const batches=Math.ceil(slots.length/3),span=d/batches;
+ if(slots.length%3!==0)throw Error("Orphan category art: "+c.name);
+ const batches=slots.length/3,span=d/batches;
  return {name:"category-"+c.name.toLowerCase().replace(/[^a-z]+/g,"-"),
    start:c.start,end:c.end,group:g,
    leave(){if(c.video)slots.forEach(({media})=>media?.el?.pause())},
@@ -214,7 +196,10 @@ function category(A,c){
      const arrive=easePop(seg(v,0,.30));
      slots.forEach((item,j)=>{
        item.mesh.visible=Math.floor(j/3)===phase;
-       if(!item.mesh.visible)return;
+       if(!item.mesh.visible){
+         if(item.media&&!item.media.el.paused)item.media.el.pause();
+         return;
+       }
        const k=j%3,x=(k-1)*3.65;
        P(item.mesh,x+(1-arrive)*(k%2?-.8:.8),.22+Math.sin(t*.9+k)*.04,-.2+k*.1);
        item.mesh.rotation.y=(1-arrive)*(k%2?-.4:.4);
@@ -236,7 +221,7 @@ function brandWall(A){
  const slots=A.logos.map((texture,i)=>{
    const root=new THREE.Group();
    const panel=new THREE.Mesh(new THREE.BoxGeometry(2.48,1.43,.08),
-      new THREE.MeshBasicMaterial({color:texture.userData.needsDarkPanel?0x17233c:0xeaf0f6}));
+      new THREE.MeshBasicMaterial({color:0x101e33}));
    root.add(panel);
    const art=new THREE.Mesh(new THREE.PlaneGeometry(2.27,1.13),
      new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false}));
@@ -251,8 +236,8 @@ function brandWall(A){
    {mono:true,color:C.ember,maxW:9,maxH:.25});
  P(sub,-5.49,3.26,1.0);
  line(g,11.1,0,2.30,.22);
- const rowLength=11.5/5;
- return {name:"brands-i-have-worked-with",start:41,end:52.5,group:g,
+ const rowLength=8.5/5;
+ return {name:"brands-i-have-worked-with",start:45,end:53.5,group:g,
   update(u,t,ctx){
     const row=Math.min(4,Math.floor(u/rowLength)),v=u-row*rowLength;
     slots.forEach(({root,name},i)=>{
@@ -283,50 +268,84 @@ function finale(){
    m.material.opacity=.13;m.material.depthWrite=false;
  }});
  const aura=glow(g,12);P(aura,0,0,-3);
- const rings=Array.from({length:3},(_,i)=>{
+ const rings=Array.from({length:4},(_,i)=>{
    const m=new THREE.Mesh(new THREE.RingGeometry(3.1+i*.48,3.116+i*.48,128),
      new THREE.MeshBasicMaterial({color:i%2?0x4466ff:0x9cc6f5,transparent:true,
        opacity:.11,side:THREE.DoubleSide,depthWrite:false}));
    g.add(m);P(m,0,0,-1.7-i*.3);return m;
  });
- const url=text(g,"edmundokutuzov.art",38,{mono:true,anchor:"center",maxW:6.1,maxH:.48});
+ const url=text(g,"edmundokutuzov.art",34,{mono:true,anchor:"center",maxW:6.1,maxH:.48});
  P(url,0,-2.58,1.5);
- const bar=line(g,10.8,0,-3.29,.65);
- return {name:"ek-3d-motion-signature",start:52.5,end:60,group:g,
+ const bar=line(g,10.8,0,-3.23,.60);
+ const sparks=Array.from({length:72},(_,i)=>{
+   const m=makeLine(.23,.013,i%3?C.ember:C.primary,.28);
+   g.add(m);return m;
+ });
+ return {name:"ek-3d-motion-signature",start:53.5,end:60,group:g,
    update(u,t,ctx){
      const enter=easePop(seg(u,0,.95));
-     const yaw=-.75+1.33*(u/7.5)+.23*Math.sin(u*1.6);
+     const yaw=-1.15+1.25*u+.28*Math.sin(u*1.7);
      const pitch=.17*Math.sin(u*1.9),roll=.09*Math.sin(u*1.35);
-     const breathe=1.19+.12*Math.sin(u*2.7)+.07*Math.sin(u*5.1);
+     const breathe=1.65+.15*Math.sin(u*3.7)+.10*Math.sin(u*1.8);
      mark.position.set(.14*Math.sin(u*.94),.13*Math.cos(u*1.2),-.18+enter*.4);
      mark.rotation.set(pitch,yaw,roll);
-     mark.scale.setScalar((.67+.33*enter)*breathe);
-     mark.userData.key.position.set(-3.7*Math.sin(u*1.9),3.5,4.1);
-     mark.userData.rim.position.set(3.7*Math.cos(u*2.3),-1.7,2.6);
+     mark.scale.setScalar((.39+.61*enter)*breathe);
+     mark.userData.key.position.set(-3.9*Math.cos(u*2.35),3.4,4.1);
+     mark.userData.rim.position.set(4.0*Math.sin(u*3.05),-2.2,2.7);
      echo.position.copy(mark.position);echo.position.z-=.83;echo.position.x-=.2;
      echo.rotation.set(pitch+.1,yaw-.2,roll-.09);
-     echo.scale.setScalar(breathe*.97);
+     echo.scale.setScalar((.39+.61*enter)*breathe*.92);
      echo.traverse(m=>{if(m.isMesh||m.isLineSegments)m.material.opacity=.08+.055*Math.sin(u*2.0)**2;});
-     aura.material.opacity=.43+.15*Math.sin(u*2.2)**2;
+     aura.material.opacity=.48+.18*Math.sin(u*2.9)**2;
      aura.rotation.z=u*.16;aura.scale.setScalar(.93+.18*Math.sin(u*1.1)**2);
      rings.forEach((r,i)=>{
        r.rotation.set(.23*Math.sin(u*.7+i),.19*Math.sin(u*.85+i),u*.21*(i%2?1:-1));
        r.scale.setScalar(.86+.20*Math.sin(u*1.4+i));
        r.material.opacity=.075+.045*Math.sin(u*3+i)**2;
      });
-     setOpacity(url,seg(u,2.5,3.4));
+     sparks.forEach((sp,i)=>{
+       const a=i*2.39996+u*(i%2?.6:-.48),r=2.6+(i%11)*.33;
+       P(sp,r*Math.cos(a),r*Math.sin(a)*.62,-2.3+(i%5)*.16);
+       sp.rotation.z=a+.43;
+       sp.scale.x=.4+.9*Math.sin(u*2.5+i)**2;
+       sp.material.opacity=(.11+.23*Math.sin(u*2.1+i*.4)**2)*enter;
+     });
+     setOpacity(url,seg(u,2.45,3.25));
      url.position.y=-2.58+.05*Math.sin(u*1.9);
      bar.scale.x=.06+.94*seg(u,1.6,3.1);
-     camera(ctx,t,12.5-.45*seg(u,0,3)+.27*Math.sin(u*.65));
+     const shakeCam=shake(t,.12);
+     setCam(ctx,[.72*Math.sin(u*.85)+shakeCam[0],.36*Math.cos(u*.68)+shakeCam[1],
+       11.9-.38*seg(u,0,3)+.22*Math.sin(u*1.5)],[0,0,0],
+       .022*Math.sin(u*.9),36);
+     ctx.scene.fog.near=9;ctx.scene.fog.far=43;ctx.post.uGrain.value=.03;
      ctx.post.uSlitGlow.value=.12+.1*Math.sin(u*1.2)**2;
-     ctx.post.uZoom.value+=.12*(1-enter)+.015*Math.sin(u*4.6);
-     ctx.post.uFlash.value+=.21*pulse(u,.08,.15)+.08*pulse(u,3.1,.19);
+     ctx.post.uZoom.value+=.17*(1-enter)+.031*Math.sin(u*5.2);
+     ctx.post.uFlash.value+=.25*pulse(u,.08,.15)+.11*pulse(u,2.9,.17)+.09*pulse(u,5.5,.18);
      ctx.post.uVig.value=.22;
    }
  };
 }
-export function buildCampaignFilm(A){
- return [opening(),...CAMPAIGNS.map((c,i)=>campaign(A,c,i)),
+export function selectedDevelopmentAssets(manifest,catalog){
+ const campaignImages=[];
+ CAMPAIGNS.forEach(c=>{
+   const item=manifest.campaigns.find(x=>x.slug===c.slug);
+   if(!item||item.frames.length!==c.count)throw Error("Corrupt campaign manifest "+c.slug);
+   item.frames.forEach((src,i)=>{if(!c.exclude.includes(i))campaignImages.push(src)});
+ });
+ const ids=CATEGORIES.flatMap(c=>c.ids);
+ const slugs=ids.map(id=>catalog.items.find(x=>x.id===id)?.slug);
+ if(campaignImages.length!==38||new Set(campaignImages).size!==38)
+   throw Error("Repeated campaign art");
+ if(ids.length!==33||new Set(ids).size!==ids.length||
+    slugs.some(s=>!s)||new Set(slugs).size!==slugs.length)
+   throw Error("Repeated category work or title");
+ if(ids.some(id=>catalog.items.find(x=>x.id===id).cat==="CAMPAIGN"))
+   throw Error("Campaign repeated in a category");
+ if(CATEGORIES.some(c=>c.ids.length%3!==0))throw Error("Single-item category frame");
+ return {campaignImages,categoryIds:ids,categorySlugs:slugs};
+}
+export function buildCampaignFilm(A,cloud){
+ selectedDevelopmentAssets(A.campaignManifest,A.catalog);
+ return [buildVoid(),buildArchive(A,cloud),...CAMPAIGNS.map((c,i)=>campaign(A,c,i)),
    ...CATEGORIES.map(c=>category(A,c)),brandWall(A),finale()];
 }
-
