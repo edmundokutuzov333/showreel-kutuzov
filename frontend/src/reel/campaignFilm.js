@@ -261,6 +261,21 @@ function brandWall(A){
 /** EK three-dimensional monogram continuously moving until 60.0s. */
 function finale(){
  const g=new THREE.Group(),mark=makeOfficialMark();g.add(mark);
+ // Three-point studio light and a soft luminous-metal face keep the
+ // official EK extrusion legible during full orbital motion.
+ const mainMetal=mark.children.find(m=>m.isMesh);
+ if(mainMetal){
+   mainMetal.material=mainMetal.material.clone();
+   mainMetal.material.metalness=.42;
+   mainMetal.material.roughness=.20;
+   mainMetal.material.emissive=new THREE.Color(0x234b7e);
+   mainMetal.material.emissiveIntensity=.55;
+ }
+ const fill=new THREE.HemisphereLight(0xeaf5ff,0x425e9c,3.0);
+ const frontal=new THREE.PointLight(0xf4f8ff,115,20);
+ const blue=new THREE.PointLight(0x559fff,92,18);
+ P(frontal,0,3.1,6.2);P(blue,-4.0,-1.4,4.7);
+ g.add(fill,frontal,blue);
  const echo=makeOfficialMark();g.add(echo);
  echo.children.filter(c=>c.isLight).forEach(c=>echo.remove(c));
  echo.traverse(m=>{if(m.isMesh||m.isLineSegments){
@@ -292,6 +307,10 @@ function finale(){
      mark.scale.setScalar((.39+.61*enter)*breathe);
      mark.userData.key.position.set(-3.9*Math.cos(u*2.35),3.4,4.1);
      mark.userData.rim.position.set(4.0*Math.sin(u*3.05),-2.2,2.7);
+     frontal.position.set(2.5*Math.cos(u*2.6),2.6+1.1*Math.sin(u*1.4),6.3);
+     frontal.intensity=108+25*Math.sin(u*3.6)**2;
+     blue.position.set(-4.1*Math.sin(u*2.1),-2.0,4.6);
+     blue.intensity=87+18*Math.cos(u*2.5)**2;
      echo.position.copy(mark.position);echo.position.z-=.83;echo.position.x-=.2;
      echo.rotation.set(pitch+.1,yaw-.2,roll-.09);
      echo.scale.setScalar((.39+.61*enter)*breathe*.92);
