@@ -1,32 +1,26 @@
 <div align="center">
-
   <p><strong>EDMUNDO KUTUZOV · MOTION ARCHIVE · 2026</strong></p>
-
-  # THE WORK MOVES.
-
-  ### An interactive showreel. A living archive. A point of view.
-
-  **Built in Maputo. Made for the world.**
-
+  <h1>THE WORK MOVES.</h1>
+  <h3>An interactive showreel. A living archive. A point of view.</h3>
+  <p><strong>Built in Maputo. Made for the world.</strong></p>
   <p>
     <a href="https://showreel-kutuzov.vercel.app/"><strong>Explore the experience</strong></a>
     &nbsp;·&nbsp;
     <a href="https://edmundokutuzov.art/">Creative portfolio</a>
     &nbsp;·&nbsp;
-    <a href="#-quick-start">Run locally</a>
+    <a href="#06--quick-start">Run locally</a>
     &nbsp;·&nbsp;
-    <a href="#-architecture">Architecture</a>
+    <a href="#04--architecture">Architecture</a>
   </p>
-
-  ![React 19](https://img.shields.io/badge/React-19-0a0d15?logo=react&logoColor=9cc6f5)
-  ![Three.js](https://img.shields.io/badge/Three.js-0.170-0a0d15?logo=threedotjs&logoColor=ffffff)
-  ![WebGL](https://img.shields.io/badge/Render-WebGL-4466ff)
-  ![Web Audio](https://img.shields.io/badge/Audio-Web%20Audio-4466ff)
-  ![Vercel](https://img.shields.io/badge/Hosting-Vercel-0a0d15?logo=vercel)
-  ![Format](https://img.shields.io/badge/Frame-1920%C3%971080-4466ff)
-
-  <sub>Independent creative engineering · Real-time cinematic rendering · No fabricated campaign assets</sub>
-
+  <p>
+    <img src="https://img.shields.io/badge/React-19-0a0d15?logo=react&amp;logoColor=9cc6f5" alt="React 19" />
+    <img src="https://img.shields.io/badge/Three.js-0.170-0a0d15?logo=threedotjs&amp;logoColor=ffffff" alt="Three.js 0.170" />
+    <img src="https://img.shields.io/badge/Render-WebGL-4466ff" alt="WebGL rendering" />
+    <img src="https://img.shields.io/badge/Audio-Web%20Audio-4466ff" alt="Web Audio" />
+    <img src="https://img.shields.io/badge/Hosting-Vercel-0a0d15?logo=vercel" alt="Vercel hosting" />
+    <img src="https://img.shields.io/badge/Frame-1920%C3%971080-4466ff" alt="1920 by 1080" />
+  </p>
+  <p><sub>Independent creative engineering · Real-time cinematic rendering · No fabricated campaign assets</sub></p>
 </div>
 
 ---
@@ -627,13 +621,8 @@ O código de apresentação e os materiais criativos pertencem a categorias jur�
 ---
 
 <div align="center">
-
-  **STAY.**
-
-  *Seen for a second. Felt for longer.*
-
-  **EDMUNDO KUTUZOV** · ART DIRECTION · MAPUTO, MOZAMBIQUE
-
-  <sub>Documentation grounded in repository source and Vercel deployment metadata · 11 November 2026</sub>
-
+  <p><strong>STAY.</strong></p>
+  <p><em>Seen for a second. Felt for longer.</em></p>
+  <p><strong>EDMUNDO KUTUZOV</strong> · ART DIRECTION · MAPUTO, MOZAMBIQUE</p>
+  <p><sub>Documentation grounded in repository source and Vercel deployment metadata · 11 November 2026</sub></p>
 </div>
