@@ -54,6 +54,12 @@ async function run(){
     const {url,urls}=await readGallery(c);
     const frames=[];
     for(let i=0;i<urls.length;i++){
+      // ICOR 10 and 12 were expressly rejected; never reimport them.
+      if(c.slug==="icor-depressao" && (i===10||i===12)){
+        fs.rmSync(path.join(ROOT,"frontend/public/reel/campaigns",c.slug,
+          String(i).padStart(2,"0")+".webp"),{force:true});
+        continue;
+      }
       const buf=await fetchBuffer(urls[i],"image");
       const folder=path.join(ROOT,"frontend/public/reel/campaigns",c.slug);
       fs.mkdirSync(folder,{recursive:true});
@@ -70,14 +76,14 @@ async function run(){
     provenance.push({slug:c.slug,source_page:url,source_urls:urls});
     process.stdout.write("CAMPAIGN "+c.slug+": "+frames.length+" verified artworks\n");
   }
-  if(checksums.length!==40)throw Error("Incorrect total gallery size "+checksums.length);
+  if(checksums.length!==38)throw Error("Incorrect total gallery size "+checksums.length);
   fs.writeFileSync(path.join(ROOT,"frontend/public/reel/campaigns/manifest.json"),
     JSON.stringify({campaigns},null,2)+"\n");
   fs.writeFileSync(path.join(ROOT,"scripts/campaign-sources.json"),
     JSON.stringify({campaigns:provenance},null,2)+"\n");
   fs.writeFileSync(path.join(ROOT,"scripts/campaign-asset-checksums.json"),
     JSON.stringify({created:"2026-11-11",assets:checksums},null,2)+"\n");
-  console.log("ALL 40 ORIGINAL ARTWORKS IMPORTED");
+  console.log("ALL 38 APPROVED ARTWORKS IMPORTED");
 }
 run().catch(e=>{console.error(e);process.exit(1)});
 
