@@ -89,17 +89,29 @@ function loadVideo(id) {
 
 export async function loadAssets(onProgress) {
   const catalog = await (await fetch(`${BASE}/catalog.json`)).json();
-  const ids = [...new Set([...SEL.cinema, ...SEL.corridor, ...SEL.rush, 89, 135, 21, 50, 80, 95, 128, 134])];
-  const total = ids.length + LOGOS.length + SEL.videos.length + 3;
+  const manifestRes = await fetch(BASE + "/campaigns/manifest.json");
+  if(!manifestRes.ok)throw Error("Missing original campaign gallery manifest");
+  const campaignManifest=await manifestRes.json();
+  if(campaignManifest.campaigns.length!==6 ||
+    campaignManifest.campaigns.reduce((n,c)=>n+c.frames.length,0)!==40)
+    throw Error("Expected forty real campaign artworks");
+  const frames=campaignManifest.campaigns.flatMap(c=>c.frames.map((src,index)=>({src,index,slug:c.slug})));
+  const categoryIds=[21,23,26,29,37,43,50,54,57,59,96,99,101,105,110,113,117,123,127,71,72,73,77,80,89,94,95,132,134,141,144,147,139,140,142,143,145,146];
+  const ids=[...new Set([...SEL.cinema,...SEL.corridor,...SEL.rush,89,135,...categoryIds])];
+  const total = ids.length + LOGOS.length + SEL.videos.length + 3 + frames.length;
   let done = 0;
   const tick = () => onProgress && onProgress(++done / total);
   const tex = {};
   const videos = {};
   const logos = [];
   const atlases = [];
+  const campaigns=Object.fromEntries(campaignManifest.campaigns.map(c=>[c.slug,Array(c.frames.length)]));
   await Promise.all([
     Promise.all(['800 100px "Syne"', '700 100px "Syne"', '600 100px "Syne"', '500 20px "JetBrains Mono"', '400 20px "JetBrains Mono"'].map((f) => document.fonts.load(f))).then(tick),
     ...[0, 1].map((a) => loadImage(`${BASE}/atlas${a}.webp`).then((img) => { atlases[a] = toTexture(img); tick(); })),
+    ...frames.map(({src,index,slug})=>loadImage(src).then(img=>{
+      campaigns[slug][index]=toTexture(img);tick();
+    })),
     ...ids.map((id) => loadImage(`${BASE}/img/${pad3(id)}.webp`).then((img) => { tex[id] = toTexture(img); tick(); })),
     ...LOGOS.map((f, i) => loadImage(`${BASE}/logos/${f}`).then((img) => { logos[i] = logoTexture(img); tick(); })),
     ...SEL.videos.map((id) => loadVideo(id).then((v) => {
@@ -109,6 +121,6 @@ export async function loadAssets(onProgress) {
       tick();
     })),
   ]);
-  return { catalog, atlases, tex, videos, logos };
+  return { catalog, atlases, tex, videos, logos, campaigns, campaignManifest };
 }
 

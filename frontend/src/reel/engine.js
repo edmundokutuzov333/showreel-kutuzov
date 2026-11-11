@@ -9,7 +9,7 @@ import { buildCinema, buildCorridor, buildRush } from "./cinema";
 import { buildClients, buildFinale } from "./outro";
 import { Explore } from "./explore";
 import { Score } from "./audio";
-import { buildDirectorCut } from "./directorCut";
+import { buildCampaignFilm } from "./campaignFilm";
 import { buildEditorialStudy } from "./editorialStudy";
 
 const TRANS = [
@@ -80,7 +80,7 @@ export class ReelEngine {
     this.cloud = new Cloud(A.catalog, A.atlases);
     this.scene.add(this.cloud.group);
     this.scenes = this.version === "v3"
-      ? [buildVoid(A), ...buildDirectorCut(A, this.cloud)]
+      ? buildCampaignFilm(A)
       : this.version === "v1"
         ? buildEditorialStudy(A)
         : [buildVoid(A), buildArchive(A, this.cloud), buildCinema(A), buildCorridor(A), buildRush(A), buildClients(A), buildFinale(A, this.cloud)];

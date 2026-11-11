@@ -23,8 +23,8 @@ export default function handler(req, res) {
   const version = ["v1","v2","v3"].includes(req.query?.version) ? req.query.version : "v2";
   // V3 keeps copy sparse. Selected samples are spoken by the original voice
   // recordings at their source indices, ensuring sound and captions agree.
-  const indices = version === "v3" ? [2,9,10] : Array.from({length:11},(_,i)=>i);
-  const cues = version === "v3" ? [8,54.5,57.4] : TIMES;
+  const indices = version === "v3" ? [2,8,10] : Array.from({length:11},(_,i)=>i);
+  const cues = version === "v3" ? [4.4,27.0,55.0] : TIMES;
   return res.status(200).json({
     lang, version, voice:lang === "pt" ? "pt-PT/tugao" : "en-US/joe", model:"piper-medium/pre-rendered",
     lines: indices.map((idx,i)=>({

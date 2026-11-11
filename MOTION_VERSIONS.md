@@ -38,3 +38,11 @@ Manual QA: V1 52s and V2/V3 60s; seek/pause/replay/explore; EN/PT/off; play each
 - 20 real client logos from portfolio repo, not substitutes.
 - The actual three-polygon EK outline from src/components/logo-paths.ts is extruded by brandMark.js.
 - The browser recorder is not a frame-accurate offline cinematic master; QC on GPU is required.
+
+## V3 / Campaign Cut — 2026-11-11
+
+The current V3 is implemented in `frontend/src/reel/campaignFilm.js` and uses an exact, verified set of six original galleries: A Depressão é Real (14), Diga YES & Viva o Mundo Online (9), Cozinhar é Arte (1), Água é Vida (3), Viva a Experiência no Super Marés (7), We Are GIZ (6) — **40 published artworks** in total, all cached locally as optimized WebP at `frontend/public/reel/campaigns`. Source URLs and SHA-256 checksums are recorded in `scripts/campaign-sources.json` and `scripts/campaign-asset-checksums.json`. The 40 assets were imported via a temporary, controlled GitHub workflow. No artwork was fabricated.
+
+Timeline: 0–3.8s official EK/portal inspired by the portfolio site opening; 3.8–23s six galleries in 3.2s dynamic multi-art bursts; 23–41s category-led Social Media, Manipulation, Some Dezaines+, Video, Campaign Design; 41–52.5s the 20 real logos in groups of four with explicit description **brands I've worked with / marcas com as quais já trabalhei**; 52.5–60s continuously animated original three-dimensional EK mark with no full-name text. The off-camera narration now uses three existing samples at 4.4/27/55s, with the spoken name removed from the outro. V1 and V2 scene code is unchanged.
+
+Text planes are scaled to capped safe widths before placement. Validate edge clipping at actual canvas resolution and all timecodes; browser realtime video export remains distinct from a frame-accurate offline master.

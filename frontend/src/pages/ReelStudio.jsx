@@ -7,7 +7,7 @@ import Storyboard from "@/components/reel/Storyboard";
 const VERSIONS = [
   {id:"v1", label:"Versão 1", sub:"Editorial · reconstrução", desc:"Homenagem programada ao Motion V1 de 52 segundos. O MP4 histórico não está neste repositório."},
   {id:"v2", label:"Versão 2", sub:"Original · arquivo 3D", desc:"A experiência interactiva original preservada: galáxia, campanhas, clientes e assinatura."},
-  {id:"v3", label:"Versão 3", sub:"A Point of View · Cinema 2026", desc:"Uma montagem de 60 segundos com campanhas reais seleccionadas, 20 clientes em grupos de quatro e a assinatura original em 3D."}
+  {id:"v3", label:"Versão 3", sub:"The Campaign Cut · 40 artes", desc:"Seis campanhas completas em cortes rápidos. Depois, cinco categorias, 20 marcas com as quais já trabalhei e o monograma EK original em movimento."}
 ];
 
 export default function ReelStudio() {
@@ -20,7 +20,7 @@ export default function ReelStudio() {
       <header className="px-6 md:px-12 pt-8 flex items-start justify-between gap-6">
         <div className="reveal">
           <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--ember)]">EDMUNDO KUTUZOV / MOTION ARCHIVE / 2026</p>
-          <h1 data-testid="studio-title" className="mt-2 font-display text-3xl md:text-5xl font-bold leading-none">{r.version==="v3"?"A point of view.":"Break the frame."}</h1>
+          <h1 data-testid="studio-title" className="mt-2 font-display text-3xl md:text-5xl font-bold leading-none">{r.version==="v3"?"The work moves.":"Break the frame."}</h1>
         </div>
         <div className="text-right font-mono text-[10px] tracking-[0.25em] uppercase text-white/45 space-y-1">
           <p>16:9 · 1920×1080 · {r.duration}s</p>
@@ -50,57 +50,80 @@ export default function ReelStudio() {
           </p>
         </div>
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}
-        {r.version==="v3"&&<div className="max-w-[1120px] mx-auto mt-20">
-          <section aria-label="Capítulos do filme" className="border-t border-white/15 pt-7">
-            <div className="flex items-end justify-between gap-6">
-              <div>
-                <p className="font-mono text-[10px] tracking-[.30em] uppercase text-[#9cc6f5]">A POINT OF VIEW / FILM INDEX</p>
-                <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold tracking-tight">Eight chapters. One signature.</h2>
-              </div>
-              <span className="font-mono text-[10px] text-white/40 whitespace-nowrap">60:00 / 16:9</span>
+        {r.version==="v3"&&<div className="max-w-[1180px] mx-auto mt-20">
+          <section aria-label="Capítulos do filme" className="border-t border-white/15 pt-8">
+            <p className="font-mono text-[10px] text-[#9cc6f5] tracking-[.3em] uppercase">THE CAMPAIGN CUT / 60 SECONDS</p>
+            <div className="mt-3 flex flex-wrap justify-between gap-4 items-end">
+              <h2 className="font-display text-2xl md:text-4xl font-bold">Every frame has a purpose.</h2>
+              <span className="font-mono text-[10px] text-white/45">06 CAMPAIGNS / 40 ARTWORKS / 20 BRANDS</span>
             </div>
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-7">
-              {[[3.6,"THE MARK"],[7.7,"HUMAN STORIES"],[14.2,"BRAND WORLDS"],[22,"DIGITAL CULTURE"],
-                [30,"CULTURE & IMPACT"],[38,"THE CRAFT"],[45,"COLLABORATIONS"],[54,"SIGNATURE"]
-              ].map(([t,label],i)=><button type="button" key={label} onClick={()=>r.seek(t)}
-                className="text-left group border-t border-white/15 hover:border-[#9cc6f5] pt-3 transition-colors">
-                <span className="font-mono text-[10px] text-white/35">0{i+1} / {t.toFixed(1)}s</span>
-                <span className="block mt-1.5 text-xs font-display font-semibold tracking-[.05em] group-hover:text-[#9cc6f5] transition-colors">{label}</span>
-              </button>)}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8">
+              {[[0,"THE BREACH"],[3.8,"CAMPAIGNS"],[23,"VISUAL PRACTICE"],[41,"BRANDS"],[52.5,"3D SIGNATURE"]].map(([time,heading],i)=>
+                <button type="button" key={heading} onClick={()=>r.seek(time)}
+                  className="text-left border-t border-white/20 hover:border-[#9cc6f5] pt-4 pb-2 transition-colors group">
+                  <span className="font-mono text-[10px] text-white/45">0{i+1} / {time.toFixed(1)}s</span>
+                  <span className="block font-display font-bold mt-2 text-sm group-hover:text-[#9cc6f5]">{heading}</span>
+                </button>)}
             </div>
           </section>
-          <section aria-label="Campanhas seleccionadas" className="mt-16 border-t border-white/15 pt-7">
-            <p className="font-mono text-[10px] tracking-[.30em] uppercase text-[#9cc6f5]">THE FILM / SELECTED WORK</p>
-            <div className="mt-3 flex items-end justify-between gap-6">
-              <h2 className="font-display text-2xl md:text-4xl font-bold tracking-tight">The work. Not the noise.</h2>
-              <a href="https://edmundokutuzov.art/work" target="_blank" rel="noreferrer"
-                className="font-mono text-[10px] uppercase tracking-[.1em] text-[#9cc6f5] hover:text-white">Full portfolio ↗</a>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
+          <section aria-label="As seis campanhas" className="border-t border-white/15 mt-16 pt-8">
+            <p className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">CAMPAIGN DESIGN / COMPLETE COLLECTIONS</p>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">One campaign. Every application.</h2>
+            <div className="grid md:grid-cols-2 gap-3 mt-8">
               {[
-                {id:139,t:8,name:"A Depressão é Real",brand:"ICOR"},
-                {id:140,t:14.3,name:"Para quem tu queres",brand:"KITKAT"},
-                {id:143,t:22.2,name:"Diga Yes & Viva Online",brand:"WEBMASTERS"},
-                {id:146,t:30.2,name:"We Are GIZ",brand:"GIZ"},
-                {id:145,t:32.8,name:"Viva a Experiência",brand:"SUPER MARÉS"},
-                {id:147,t:35.4,name:"Jimmys Killer",brand:"JIMMYS KILLER"}
-              ].map((work,i)=><button type="button" key={work.id} onClick={()=>r.seek(work.t)}
-                className="group relative overflow-hidden text-left bg-white/[.035] border border-white/10 hover:border-[#9cc6f5]/70 transition-colors">
-                <div className="aspect-[16/10] overflow-hidden relative">
-                  <img src={`/reel/img/${String(work.id).padStart(3,"0")}.webp`} loading="lazy" alt={work.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d15]/70 to-transparent"/>
-                  <span className="absolute bottom-3 left-4 font-mono text-[10px] text-white/80 tracking-[.1em]">{work.brand}</span>
-                  <span className="absolute bottom-3 right-4 text-white/75 font-mono text-[10px]">{String(i+1).padStart(2,"0")}</span>
-                </div>
-                <div className="px-4 py-4 flex items-center justify-between gap-3">
-                  <span className="font-display font-semibold text-sm">{work.name}</span>
-                  <span className="font-mono text-[10px] text-[#9cc6f5] whitespace-nowrap">{work.t}s ↗</span>
-                </div>
-              </button>)}
+                ["icor-depressao","A Depressão é Real","ICOR",14,3.8],
+                ["diga-yes","Diga YES & Viva o Mundo Online","WEBMASTERS",9,7],
+                ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",1,10.2],
+                ["agua-e-vida","Água é Vida e Você é 100% Água","FONTE FRESCA",3,13.4],
+                ["super-mares","Viva a Experiência no Super Marés","SUPER MARÉS",7,16.6],
+                ["we-are-giz","We Are GIZ","GIZ",6,19.8],
+              ].map(([slug,title,client,count,start],i)=>
+                <button key={slug} type="button" onClick={()=>r.seek(start)}
+                  className="group border border-white/10 hover:border-[#9cc6f5]/75 bg-white/[.028] text-left overflow-hidden transition-colors">
+                  <div className="flex flex-col sm:flex-row">
+                    <div className="sm:w-[43%] min-h-[220px] relative bg-[#111b2e] overflow-hidden">
+                      <img src={"/reel/campaigns/"+slug+"/00.webp"} alt={title} loading="lazy"
+                        className="absolute inset-0 w-full h-full object-contain group-hover:scale-[1.045] transition-transform duration-700"/>
+                      <span className="absolute top-3 left-3 bg-[#0a0d15]/80 text-[#9cc6f5] p-2 font-mono text-[10px]">{String(i+1).padStart(2,"0")} / 06</span>
+                    </div>
+                    <div className="p-5 sm:w-[57%] flex flex-col justify-between min-w-0">
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-[.12em] text-[#9cc6f5]">{client} / CAMPAIGN DESIGN</p>
+                        <h3 className="font-display font-bold text-lg md:text-xl mt-3 leading-tight break-words">{title}</h3>
+                      </div>
+                      <div className="mt-6">
+                        <div className="flex gap-1 h-14">
+                          {Array.from({length:Math.min(count,4)},(_,j)=>
+                            <div key={j} className="flex-1 min-w-0 overflow-hidden bg-[#10192d]">
+                              <img src={"/reel/campaigns/"+slug+"/"+String(j).padStart(2,"0")+".webp"} loading="lazy" alt=""
+                                className="w-full h-full object-contain"/>
+                            </div>)}
+                        </div>
+                        <div className="flex justify-between items-center gap-2 mt-4 font-mono text-[10px]">
+                          <span className="text-white/45">{count} {count===1?"ARTE":"ARTES"}</span>
+                          <span className="text-[#9cc6f5]">{start.toFixed(1)}s / VER NO FILME</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </button>)}
             </div>
-            <p className="font-mono text-[10px] leading-relaxed mt-5 text-white/40">
-              A sequência de campanhas apresenta projectos identificados no portfólio. Os 20 logótipos seguintes identificam colaborações, não necessariamente a autoria de campanhas para cada marca.
+          </section>
+          <section aria-label="Categorias do portfólio" className="border-t border-white/15 mt-16 pt-8">
+            <p className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">BEYOND CAMPAIGNS</p>
+            <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Creative practice, not labels.</h2>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-7">
+              {[[23,"SOCIAL MEDIA"],[26.6,"MANIPULATION"],[30.2,"SOME DEZAINES+"],
+                [33.8,"VIDEO"],[37.4,"CAMPAIGN DESIGN"]].map(([time,name],i)=>
+                <button key={name} type="button" onClick={()=>r.seek(time)}
+                  className="border border-white/15 hover:border-[#9cc6f5] bg-white/[.025] p-5 text-left transition-colors">
+                  <span className="block font-mono text-[10px] text-white/40">0{i+1} / {time.toFixed(1)}s</span>
+                  <span className="block font-display font-bold text-xs md:text-sm mt-4">{name}</span>
+                </button>)}
+            </div>
+            <p className="font-mono text-[10px] text-white/40 leading-relaxed mt-5">
+              Apenas as campanhas têm títulos individuais. Os outros trabalhos são apresentados por categoria.
+              As 20 marcas identificam colaborações profissionais, não atribuições das campanhas anteriores.
             </p>
           </section>
         </div>}
