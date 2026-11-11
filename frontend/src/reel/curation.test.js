@@ -18,7 +18,7 @@ describe('Final V3 editorial/provenance rules',()=>{
  });
  test('only four categories, in complete three-artwork beats',()=>{
    expect(CATEGORIES.map(c=>c.name)).toEqual([
-     'SOCIAL MEDIA','MANIPULATION','SOME DEZAINES+','VIDEO'
+     'SOCIAL MEDIA','MANIPULATION','SOME DEZAINES*','VIDEO'
    ]);
    CATEGORIES.forEach(c=>{
      expect(c.ids.length%3).toBe(0);
@@ -41,6 +41,15 @@ describe('Final V3 editorial/provenance rules',()=>{
      const f='public/reel/'+(it.video?'vid':'img')+'/'+String(id).padStart(3,'0')+'.'+(it.video?'mp4':'webp');
      expect(fs.existsSync(path.resolve(f))).toBe(true);
    });
+ });
+ test('Eight exact artwork replacements keep three different art IDs per card',()=>{
+   expect(CATEGORIES.find(c=>c.name==='SOME DEZAINES*').ids).toEqual([
+     132,71,72,87,90,89,138,137,135
+   ]);
+   expect(CAMPAIGNS.find(c=>c.slug==='cozinhar-arte').extraIds).toEqual([147]);
+   const chosen=selectedDevelopmentAssets(manifest,catalog);
+   expect(chosen.extraIds).toEqual([147]);
+   expect(chosen.categoryIds).not.toContain(147);
  });
  test('twenty actual brands and a three-part real EK source mark',()=>{
    expect(LOGOS).toHaveLength(20);

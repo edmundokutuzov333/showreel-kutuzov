@@ -96,7 +96,7 @@ export async function loadAssets(onProgress) {
     campaignManifest.campaigns.reduce((n,c)=>n+c.frames.length,0)!==40)
     throw Error("Expected forty real campaign artworks");
   const frames=campaignManifest.campaigns.flatMap(c=>c.frames.map((src,index)=>({src,index,slug:c.slug})));
-  const categoryIds=[21,23,26,29,37,43,50,54,57,59,96,99,101,105,110,113,117,123,127,71,72,73,77,80,89,94,95,132,134,141,144,147,139,140,142,143,145,146];
+  const categoryIds=[21,23,26,29,37,43,50,54,57,59,96,99,101,105,110,113,117,123,127,71,72,73,77,80,87,89,90,94,95,132,134,135,137,138,141,144,147,139,140,142,143,145,146];
   const ids=[...new Set([...SEL.cinema,...SEL.corridor,...SEL.rush,89,135,...categoryIds])];
   const total = ids.length + LOGOS.length + SEL.videos.length + 3 + frames.length;
   let done = 0;

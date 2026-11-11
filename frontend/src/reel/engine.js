@@ -222,6 +222,11 @@ export class ReelEngine {
     this.onTime && this.onTime(this.t);
   }
 
+  async recordMp4(preset, onProgress, options = {}) {
+    const { renderMp4 } = await import("./mp4Export");
+    return renderMp4(this, preset, onProgress, options);
+  }
+
   async record(onProgress) {
     // Chrome may report generic MP4 support but encode VP9/Opus inside MP4.
     // Prefer WebM in Chromium; Safari uses a compatible H.264/AAC MP4 container.

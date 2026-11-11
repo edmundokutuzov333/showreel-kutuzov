@@ -63,3 +63,30 @@ continuously with larger scale, faster 3D spin, animated light rigs, more
 reactive rings, orbital camera movement and 72 kinetic particles.
 No full-name text appears in the outro. Creative categories do not
 repeat published campaign visual IDs or individual artwork slugs.
+
+
+### Final copy and MP4 multi-quality exporter — 11 November 2026
+
+Approved creative copy: index title STAY; subtitle
+SEEN FOR A SECOND. FELT FOR LONGER.; filter subtitles
+Every Angle / More Than a Post / Bend Reality / Outside the Lines /
+Made to Matter / Never Just Frames. The published DESIGN works
+remain filterable under the SOME DEZAINES* display label.
+Development category SOME DEZAINES* contains exactly catalogue
+IDs 132,71,72 / 87,90,89 / 138,137,135.
+Cozinhar é Arte keeps its original piece and adds the explicitly
+requested /reel/img/147.webp; no category repeats it.
+EK finale effects and animation are unchanged; only
+www.edmundokutuzov.art is added as a safe-zone title.
+
+Export is instrumental-only (no narration or voice playback).
+The MP4 exporter drives Three.js frame-by-frame at 30 fps through
+Mediabunny/WebCodecs H.264 and mixes the existing score using
+OfflineAudioContext into AAC (software fallback via
+@mediabunny/aac-encoder). Native render sizes:
+720p 1280x720, 1080p 1920x1080, 1440p 2560x1440, 4K 3840x2160.
+MP4 video dimensions and AAC audio track are validated before
+a Blob download is offered; clicking Descarregar agora starts an
+immediate download. Encoding speed and support depend on available
+CPU/GPU/codec; unsupported devices are told rather than receiving
+an upscaled file or mislabeled WebM.

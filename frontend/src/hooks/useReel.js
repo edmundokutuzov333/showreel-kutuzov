@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { ReelEngine } from "@/reel/engine";
 
 // Keep the reel functional when the hosting project has no backend env yet.
@@ -10,7 +9,7 @@ const API = `${BACKEND}/api`;
 
 export function useReel() {
   const [version, setVersionState] = useState("v3");
-  const langRef = useRef("en");
+  const langRef = useRef("off");
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -18,7 +17,7 @@ export function useReel() {
   const [error, setError] = useState("");
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [lang, setLangState] = useState("en");
+  const [lang, setLangState] = useState("off");
   const [lines, setLines] = useState([]);
   const [voLoading, setVoLoading] = useState(false);
   const [recording, setRecording] = useState(null);
@@ -32,33 +31,22 @@ export function useReel() {
   const [selected, setSelected] = useState(null);
   const [filter, setFilterState] = useState("ALL");
 
-  const loadVO = useCallback(async (l) => {
+  // Soundtrack only: no voice assets are loaded or scheduled.
+  const loadVO = useCallback(async () => {
     const eng = engineRef.current;
-    if (!eng) return;
-    setVoLoading(true);
-    try {
-      if (l === "off") {
-        await eng.setNarration(null);
-        const { data } = await axios.get(`${API}/reel/narration`, { params: { lang: "en", version } });
-        setLines(data.lines);
-      } else {
-        const { data } = await axios.get(`${API}/reel/narration`, { params: { lang: l, version } });
-        setLines(data.lines);
-        const status = await eng.setNarration(data.lines, BACKEND);
-        if (status && status.loaded < status.total) {
-          setError(`Foram carregadas ${status.loaded} de ${status.total} falas. A instrumental mantém-se disponível.`);
-        } else {
-          setError("");
-        }
-      }
-      if (eng.playing) eng.seek(eng.t);
-    } catch (e) {
-      await eng.setNarration(null);
-      setError("Narração indisponível nesta reprodução. A instrumental continua; experimente Sem voz.");
-    } finally {
-      setVoLoading(false);
-    }
-  }, [version]);
+    if (eng) await eng.setNarration(null);
+    setLines([]);
+    setError("");
+    setVoLoading(false);
+  }, []);
+  const [quality, setQuality] = useState("1080p");
+  const setQualityPreset = useCallback((preset) => {
+    if (!["720p", "1080p", "1440p", "2160p"].includes(preset)) return;
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+    downloadUrlRef.current = null;
+    setDownload(null);
+    setQuality(preset);
+  }, []);
 
   useEffect(() => {
     const eng = new ReelEngine(canvasRef.current, version);
@@ -95,7 +83,11 @@ export function useReel() {
     if (!eng.playing) { await eng.play(); setPlaying(true); }
   }, [recording]);
 
-  const setLang = useCallback(async (l) => { langRef.current = l; setLangState(l); await loadVO(l); }, [loadVO]);
+  const setLang = useCallback(async () => {
+    langRef.current = "off";
+    setLangState("off");
+    await loadVO();
+  }, [loadVO]);
 
   const exportVideo = useCallback(async () => {
     const eng = engineRef.current;
@@ -107,19 +99,19 @@ export function useReel() {
     setRecording(0);
     setPlaying(true);
     try {
-      const { blob, ext } = await eng.record((p) => setRecording(p));
+      const { blob, ext, width, height, fps } = await eng.recordMp4(quality, (p) => setRecording(p));
       const url = URL.createObjectURL(blob);
       downloadUrlRef.current = url;
-      const name = `edmundo-kutuzov-${version}-${langRef.current}-16x9.${ext}`;
+      const name = "edmundo-kutuzov-" + version + "-instrumental-" + quality + "-16x9." + ext;
       // A fresh click is required: automatic downloads after 60s are often blocked.
-      setDownload({ url, name, size: blob.size });
+      setDownload({ url, name, size: blob.size, width, height, fps, quality });
     } catch (e) {
       setError(e.message || "A exportação falhou.");
     } finally {
       setRecording(null);
       setPlaying(false);
     }
-  }, [recording, version]);
+  }, [recording, version, quality]);
 
   const setMode = useCallback((m) => {
     const eng = engineRef.current;
@@ -159,6 +151,6 @@ export function useReel() {
     setTime(0); setModeState("reel"); setSelected(null); setVersionState(v);
   }, [version, recording]);
 
-  return { version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
+  return { quality, setQualityPreset, version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
 }
 

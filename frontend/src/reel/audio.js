@@ -14,8 +14,8 @@ const WHOOSH = [12.4, 20.6, 22.9, 24.9, 26.9, 28.85, 36.85, 44.85, 49.85];
 const CLICKS = [13.8, 14.6, 15.6, 16.6, 17.6, 18.6, 19.6];
 
 export class Score {
-  constructor() {
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "playback" });
+  constructor({ context } = {}) {
+    this.ctx = context || new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "playback" });
     const c = this.ctx;
     this.master = c.createGain();
     this.master.gain.value = 0.9;
@@ -26,8 +26,9 @@ export class Score {
     comp.release.value = 0.25;
     this.master.connect(comp);
     comp.connect(c.destination);
-    this.recDest = c.createMediaStreamDestination();
-    comp.connect(this.recDest);
+    this.recDest = typeof c.createMediaStreamDestination === "function"
+      ? c.createMediaStreamDestination() : null;
+    if (this.recDest) comp.connect(this.recDest);
     this.noise = this.makeNoise();
     this.verbIR = this.makeIR(3.2);
     this.vo = [];

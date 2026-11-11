@@ -46,7 +46,7 @@ export default function ReelStudio() {
           {r.error&&<p role="status" data-testid="reel-error" className="mt-4 font-mono text-[11px] text-[#ffadad]">{r.error}</p>}
           <p className="mt-4 font-mono text-[11px] leading-relaxed text-white/50">{selected.desc}</p>
           <p className="mt-3 font-mono text-[10px] tracking-[.09em] text-white/35">
-            Reprodução em tempo real. A gravação capta vídeo e áudio em tempo real, com a opção de voz seleccionada. Depois de concluída, clique em Descarregar agora. Mantenha este separador visível. A extensão MP4 ou WebM depende do navegador.
+            Reprodução em tempo real. A exportação MP4 renderiza cada fotograma na resolução seleccionada, com banda sonora instrumental e sem voz. Quando concluir, clique em Descarregar agora. Mantenha este separador visível. A extensão MP4 ou WebM depende do navegador.
           </p>
         </div>
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}
@@ -74,7 +74,7 @@ export default function ReelStudio() {
               {[
                 ["icor-depressao","A Depressão é Real","ICOR",12,21],
                 ["diga-yes","Diga YES & Viva o Mundo Online","WEBMASTERS",9,23.2],
-                ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",1,25.4],
+                ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",2,25.4],
                 ["agua-e-vida","Água é Vida e Você é 100% Água","FONTE FRESCA",3,27.6],
                 ["super-mares","Viva a Experiência no Super Marés","SUPER MARÉS",7,29.8],
                 ["we-are-giz","We Are GIZ","GIZ",6,32],
@@ -96,7 +96,8 @@ export default function ReelStudio() {
                         <div className="flex gap-1 h-14">
                           {Array.from({length:Math.min(count,4)},(_,j)=>
                             <div key={j} className="flex-1 min-w-0 overflow-hidden bg-[#10192d]">
-                              <img src={"/reel/campaigns/"+slug+"/"+String(j).padStart(2,"0")+".webp"} loading="lazy" alt=""
+                              <img src={slug==="cozinhar-arte" && j===1 ? "/reel/img/147.webp" :
+                                 "/reel/campaigns/"+slug+"/"+String(j).padStart(2,"0")+".webp"} loading="lazy" alt=""
                                 className="w-full h-full object-contain"/>
                             </div>)}
                         </div>
@@ -114,7 +115,7 @@ export default function ReelStudio() {
             <p className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">BEYOND CAMPAIGNS</p>
             <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Three at a time. Never twice.</h2>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-7">
-              {[[34.2,"SOCIAL MEDIA"],[36.9,"MANIPULATION"],[39.6,"SOME DEZAINES+"],
+              {[[34.2,"SOCIAL MEDIA"],[36.9,"MANIPULATION"],[39.6,"SOME DEZAINES*"],
                 [42.3,"VIDEO"]].map(([time,name],i)=>
                 <button key={name} type="button" onClick={()=>r.seek(time)}
                   className="border border-white/15 hover:border-[#9cc6f5] bg-white/[.025] p-5 text-left transition-colors">

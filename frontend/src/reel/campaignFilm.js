@@ -14,7 +14,7 @@ import { buildArchive } from "./archive";
 export const CAMPAIGNS=[
  {slug:"icor-depressao",title:"A DEPRESSÃO É REAL",client:"ICOR",count:14,exclude:[11,13],start:21,end:23.2},
  {slug:"diga-yes",title:"DIGA YES & VIVA O MUNDO ONLINE",client:"WEBMASTERS",count:9,exclude:[],start:23.2,end:25.4},
- {slug:"cozinhar-arte",title:"COZINHAR É ARTE",client:"PEMBE MOZ",count:1,exclude:[],start:25.4,end:27.6},
+ {slug:"cozinhar-arte",title:"COZINHAR É ARTE",client:"PEMBE MOZ",count:1,exclude:[],extraIds:[147],start:25.4,end:27.6},
  {slug:"agua-e-vida",title:"ÁGUA É VIDA E VOCÊ É 100% ÁGUA",client:"FONTE FRESCA",count:3,exclude:[],start:27.6,end:29.8},
  {slug:"super-mares",title:"VIVA A EXPERIÊNCIA NO SUPER MARÉS",client:"SUPER MARÉS",count:7,exclude:[],start:29.8,end:32},
  {slug:"we-are-giz",title:"WE ARE GIZ",client:"GIZ",count:6,exclude:[],start:32,end:34.2}
@@ -22,7 +22,7 @@ export const CAMPAIGNS=[
 export const CATEGORIES=[
  {name:"SOCIAL MEDIA",start:34.2,end:36.9,ids:[21,23,26,37,43,50,54,57,59]},
  {name:"MANIPULATION",start:36.9,end:39.6,ids:[96,99,101,105,110,113,117,123,127]},
- {name:"SOME DEZAINES+",start:39.6,end:42.3,ids:[71,72,73,77,80,89,94,132,134]},
+ {name:"SOME DEZAINES*",start:39.6,end:42.3,ids:[132,71,72,87,90,89,138,137,135]},
  {name:"VIDEO",start:42.3,end:45,ids:[148,149,150,151,152,153],video:true}
 ];
 export const BRAND_NAMES=[
@@ -96,7 +96,11 @@ function layout(n,style,beat){
 function campaign(A,c,i){
  const all=A.campaigns[c.slug]||[];
  if(all.length!==c.count)throw Error("Original gallery missing "+c.slug);
- const textures=all.filter((_,index)=>!c.exclude.includes(index));
+ const textures=[...all.filter((_,index)=>!c.exclude.includes(index)),
+   ...(c.extraIds||[]).map(id=>{
+     if(!A.tex[id])throw Error("Requested second campaign artwork missing: "+id);
+     return A.tex[id];
+   })];
  const g=new THREE.Group(),batches=[];
  for(let offset=0;offset<textures.length;offset+=4){
    const group=new THREE.Group();
@@ -289,6 +293,9 @@ function finale(){
        opacity:.11,side:THREE.DoubleSide,depthWrite:false}));
    g.add(m);P(m,0,0,-1.7-i*.3);return m;
  });
+ const url=text(g,"www.edmundokutuzov.art",33,
+   {mono:true,anchor:"center",maxW:6.0,maxH:.40});
+ P(url,0,-2.36,1.6);
  const sparks=Array.from({length:72},(_,i)=>{
    const m=makeLine(.23,.013,i%3?C.ember:C.primary,.28);
    g.add(m);return m;
@@ -333,6 +340,7 @@ function finale(){
      ctx.scene.fog.near=9;ctx.scene.fog.far=43;ctx.post.uGrain.value=.03;
      ctx.post.uSlitGlow.value=.12+.1*Math.sin(u*1.2)**2;
      ctx.post.uZoom.value+=.17*(1-enter)+.031*Math.sin(u*5.2);
+     setOpacity(url,seg(u,2.05,3.05));
      ctx.post.uFlash.value+=.25*pulse(u,.08,.15)+.11*pulse(u,2.9,.17)+.09*pulse(u,5.5,.18);
      ctx.post.uVig.value=.22;
    }
@@ -345,6 +353,9 @@ export function selectedDevelopmentAssets(manifest,catalog){
    if(!item||item.frames.length!==c.count)throw Error("Corrupt campaign manifest "+c.slug);
    item.frames.forEach((src,i)=>{if(!c.exclude.includes(i))campaignImages.push(src)});
  });
+ const extraIds=CAMPAIGNS.flatMap(c=>c.extraIds||[]);
+ if(extraIds.length!==new Set(extraIds).size)
+   throw Error("A second campaign artwork was repeated");
  const ids=CATEGORIES.flatMap(c=>c.ids);
  const slugs=ids.map(id=>catalog.items.find(x=>x.id===id)?.slug);
  if(campaignImages.length!==38||new Set(campaignImages).size!==38)
@@ -352,10 +363,12 @@ export function selectedDevelopmentAssets(manifest,catalog){
  if(ids.length!==33||new Set(ids).size!==ids.length||
     slugs.some(s=>!s)||new Set(slugs).size!==slugs.length)
    throw Error("Repeated category work or title");
+ if(extraIds.some(id=>ids.includes(id)))
+   throw Error("An added campaign artwork repeats within a category");
  if(ids.some(id=>catalog.items.find(x=>x.id===id).cat==="CAMPAIGN"))
    throw Error("Campaign repeated in a category");
  if(CATEGORIES.some(c=>c.ids.length%3!==0))throw Error("Single-item category frame");
- return {campaignImages,categoryIds:ids,categorySlugs:slugs};
+ return {campaignImages,categoryIds:ids,categorySlugs:slugs,extraIds};
 }
 export function buildCampaignFilm(A,cloud){
  selectedDevelopmentAssets(A.campaignManifest,A.catalog);

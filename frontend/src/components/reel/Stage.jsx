@@ -64,7 +64,7 @@ const Stage = forwardRef(function Stage({ r }, ref) {
       {r.mode === "explore" && <ExploreOverlay r={r} />}
       {r.recording !== null && (
         <div data-testid="recording-badge" className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur font-mono text-[10px] tracking-[0.25em] uppercase text-white flex items-center gap-2 pointer-events-none">
-          <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" /> REC · mantenha este separador visível
+          <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" /> A EXPORTAR MP4 · mantenha este separador aberto
         </div>
       )}
     </div>

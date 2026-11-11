@@ -12,13 +12,19 @@ export const FILTERS = [
   [19.6, "ALL"],
 ];
 const LABELS = ["ALL", "SOCIAL MEDIA", "IMAGE MANIPULATION", "DESIGN", "CAMPAIGN", "VIDEO"];
+export const ARCHIVE_LABELS = {ALL:"ALL","SOCIAL MEDIA":"SOCIAL MEDIA",
+ "IMAGE MANIPULATION":"IMAGE MANIPULATION",DESIGN:"SOME DEZAINES*",
+ CAMPAIGN:"CAMPAIGN",VIDEO:"VIDEO"};
+export const ARCHIVE_LINES = {ALL:"EVERY ANGLE","SOCIAL MEDIA":"MORE THAN A POST",
+ "IMAGE MANIPULATION":"BEND REALITY",DESIGN:"OUTSIDE THE LINES",
+ CAMPAIGN:"MADE TO MATTER",VIDEO:"NEVER JUST FRAMES"};
 const ORIGIN = new THREE.Vector3(0, 0, 0);
 
 const match = (f, cat) => (f === "ALL" ? 0 : cat === f ? 1 : -1);
 
 function filterBar(items) {
   const hud = new THREE.Group();
-  const labels = LABELS.map((l) => makeText({ text: l, font: "JetBrains Mono", weight: 500, size: 17, color: C.bone, tracking: 0.26, unit: 1 }));
+  const labels = LABELS.map((l) => makeText({ text: ARCHIVE_LABELS[l], font: "JetBrains Mono", weight: 500, size: 17, color: C.bone, tracking: 0.26, unit: 1 }));
   const gap = 54;
   const widths = labels.map((m) => m.userData.size.w - 17 * 0.44);
   const total = widths.reduce((a, b) => a + b, 0) + gap * (labels.length - 1);
@@ -35,8 +41,8 @@ function filterBar(items) {
   const count = new DynText({ font: "Syne", weight: 700, size: 30, color: C.bone, tracking: 0, cw: 900, align: "center" });
   count.mesh.position.set(960, 885, 0);
   hud.add(under, count.mesh);
-  const counts = Object.fromEntries(LABELS.map((l) => [l, l === "ALL" ? items.length : items.filter((it) => it.cat === l).length]));
-  return { hud, labels, widths, xs, under, count, counts };
+
+  return { hud, labels, widths, xs, under, count };
 }
 
 export function buildArchive(A, cloud) {
@@ -50,8 +56,8 @@ export function buildArchive(A, cloud) {
   const c = pose();
   const o = pose();
   const tmp = pose();
-  const big = makeText({ text: "155", font: "Syne", weight: 800, size: 420, color: C.bone, anchor: "center" });
-  const cap = makeText({ text: "WORKS · ONE ARCHIVE · 2020 — 2026", font: "JetBrains Mono", weight: 500, size: 20, color: C.ember, tracking: 0.32, anchor: "center" });
+  const big = makeText({ text: "STAY", font: "Syne", weight: 800, size: 320, color: C.bone, anchor: "center" });
+  const cap = makeText({ text: "SEEN FOR A SECOND. FELT FOR LONGER.", font: "JetBrains Mono", weight: 500, size: 20, color: C.ember, tracking: 0.32, anchor: "center" });
   const title = new THREE.Group();
   cap.position.y = -1.55;
   title.add(big, cap);
@@ -110,7 +116,7 @@ export function buildArchive(A, cloud) {
       bar.under.position.x = lerp(bar.xs[pi], bar.xs[ci], fp);
       bar.under.scale.x = lerp(bar.widths[pi], bar.widths[ci], fp);
       setOpacity(bar.under, hudO);
-      bar.count.set(`${String(bar.counts[cur]).padStart(3, "0")} works`);
+      bar.count.set(ARCHIVE_LINES[cur]);
       setOpacity(bar.count.mesh, hudO * fp);
       bar.hud.visible = hudO > 0.001;
       const Pp = ctx.post;

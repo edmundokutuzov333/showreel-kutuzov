@@ -1,7 +1,10 @@
 import { Play, Pause, RotateCcw, Maximize2, Download, Circle, Orbit } from "lucide-react";
 import Timeline from "@/components/reel/Timeline";
 
-const LANGS = [["en", "EN"], ["pt", "PT"], ["off", "Sem voz"]];
+const RESOLUTIONS = [
+ ["720p","720p (HD)"], ["1080p","1080p (Full HD)"],
+ ["1440p","1440p (QHD)"], ["2160p","4K (UHD / 2160p)"]
+];
 
 function IconBtn({ testid, onClick, disabled, children, label }) {
   return (
@@ -26,17 +29,19 @@ export default function Controls({ r, onFullscreen }) {
         <div className="w-full md:w-auto md:flex-1 min-w-0"><Timeline time={r.time} duration={r.duration} onSeek={r.seek} disabled={!r.ready || busy} /></div>
       </div>
       <div className="flex flex-wrap items-center gap-3 justify-between">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/45">Narração</span>
-          <div className="flex rounded-full border border-white/12 p-1">
-            {LANGS.map(([k, l]) => (
-              <button key={k} data-testid={`narration-lang-${k}`} disabled={busy || r.voLoading} onClick={() => r.setLang(k)}
-                className={`px-4 h-8 rounded-full font-mono text-[10px] tracking-[0.2em] uppercase transition-colors duration-200 ${r.lang === k ? "bg-[var(--primary)] text-white" : "text-white/60 hover:text-white"}`}>
-                {l}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-[#9cc6f5]">Instrumental · sem voz</span>
+          <div data-testid="export-resolution-options" role="group" aria-label="Resolução do vídeo MP4"
+            className="flex flex-wrap gap-1 rounded-xl border border-white/15 p-1">
+            {RESOLUTIONS.map(([key,label]) => (
+              <button key={key} type="button" data-testid={"export-quality-"+key}
+                disabled={busy} aria-pressed={r.quality===key} onClick={() => r.setQualityPreset(key)}
+                className={"px-3 h-9 rounded-lg font-mono text-[10px] transition-colors disabled:opacity-40 " +
+                  (r.quality===key ? "bg-[#9cc6f5] text-[#0a0d15] font-semibold" : "text-white/60 hover:text-white hover:bg-white/10")}>
+                {label}
               </button>
             ))}
           </div>
-          {r.voLoading && <span data-testid="narration-loading" className="font-mono text-[10px] tracking-[0.2em] text-[var(--ember)] uppercase">a carregar voz…</span>}
         </div>
         <div className="flex items-center gap-3">
           <button data-testid="explore-mode-button" onClick={() => r.setMode(r.mode === "explore" ? "reel" : "explore")} disabled={!r.ready || busy}
@@ -47,14 +52,16 @@ export default function Controls({ r, onFullscreen }) {
           <button data-testid="export-video-button" onClick={r.exportVideo} disabled={!r.ready || busy}
             className="h-11 px-5 rounded-full bg-[var(--primary)] text-white font-mono text-[11px] tracking-[0.22em] uppercase flex items-center gap-2 hover:bg-[#5a78ff] transition-colors duration-200 disabled:opacity-50">
             {busy ? <Circle size={12} className="fill-red-500 text-red-500 animate-pulse" /> : <Download size={15} />}
-            {busy ? `A gravar ${Math.round(r.recording * 100)}%` : "Preparar vídeo 1080p"}
+            {busy ? "A exportar MP4 "+Math.round(r.recording * 100)+"%" :
+              "Exportar "+RESOLUTIONS.find(([key])=>key===r.quality)?.[1]+" · MP4"}
           </button>
         </div>
       </div>
       {r.download && (
         <div role="status" data-testid="download-ready" className="flex w-full flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-[#9cc6f5]/35 bg-[#4466ff]/10 px-4 py-3">
           <span className="font-mono text-[11px] leading-relaxed text-white/75">
-            Vídeo pronto · {(r.download.size / 1e6).toFixed(1)} MB · {r.download.name.endsWith(".mp4") ? "MP4" : "WebM"}
+            Vídeo pronto · {(r.download.size / 1e6).toFixed(1)} MB · MP4 H.264 + AAC ·
+            {" "+r.download.width+" × "+r.download.height+" · "+r.download.fps+" fps · instrumental"}
           </span>
           <a data-testid="download-link" href={r.download.url} download={r.download.name}
             className="inline-flex items-center gap-2 rounded-full bg-[#9cc6f5] px-5 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-[#0a0d15] hover:bg-white transition-colors">
