@@ -223,7 +223,12 @@ export class ReelEngine {
   }
 
   async record(onProgress) {
-    const types = ["video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+    // Chrome may report generic MP4 support but encode VP9/Opus inside MP4.
+    // Prefer WebM in Chromium; Safari uses a compatible H.264/AAC MP4 container.
+    const safari = /Safari\//.test(navigator.userAgent) && !/(?:Chrome|Chromium|CriOS|Edg|OPR|Android)/.test(navigator.userAgent);
+    const types = safari
+      ? ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4;codecs=avc1.640028,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"]
+      : ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm", "video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4"];
     const mimeType = types.find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
     if (!mimeType || typeof this.canvas.captureStream !== "function") throw new Error("Este browser não suporta a gravação de vídeo e áudio. Experimente Chrome, Edge ou Safari recente.");
     this.setMode("reel");
