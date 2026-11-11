@@ -1,0 +1,80 @@
+{
+  "campaigns": [
+    {
+      "slug": "icor-depressao",
+      "source_page": "https://edmundokutuzov.art/work/a-depressao-e-real",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/7e86579f-6d81-4386-b14c-7a3256376bf4.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/f90b9344-fdab-4680-a465-877cfdea54e5.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/51b1c9c2-411a-4a50-b323-4007d8a65da6.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/0de86e03-6e4f-480a-a801-2cea05767cf0.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/ebedff1a-a1b0-4950-b2f1-813565241c55.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/cc9f8617-962b-4e11-a06d-4c445061163f.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/cef4b1ca-74b7-4df6-b68c-732ae21f3e0e.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/74fda204-f5eb-4651-899e-229d49b0cab2.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/eed1f23c-a8c7-4966-8b49-2e957f2bf979.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/fdfc2a4d-4d19-4135-9b7f-2fb64e0f4f8b.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/1ce6829d-39d3-4686-9a10-38c39a7ff4ee.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/a1d7b30a-830f-4af8-8d0d-31f54f8fa81e.png",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/9b223578-d0c0-4e4a-bf0c-8336e22f159c.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/75869be1-45fb-4910-85d6-d534d444442d.png"
+      ]
+    },
+    {
+      "slug": "diga-yes",
+      "source_page": "https://edmundokutuzov.art/work/digas-yes-e-viva-o-mundo-online-campaign",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/6c1e2347-3465-41e2-96ab-d1a921f9f2d2.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/53d6148c-db41-4396-8994-ddacae509d1d.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/b9a939ca-978b-420d-a5fd-67103e5f32ef.jpg",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/8042dbe4-4bb1-48bc-9097-b108780dfa56.jpg",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/01d3619c-3ae5-4fda-9a1b-50b6b140e6d9.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/2604f013-2adb-41e5-b5ad-6ef726ba3093.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/5bf73ff9-4ffa-4559-a45a-cdf600e2e50a.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/f54e7667-d062-4f6d-bbd7-0de95416ba8c.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/e9f87ea7-38cd-4fc4-a86c-3bc51e6505cd.webp"
+      ]
+    },
+    {
+      "slug": "cozinhar-arte",
+      "source_page": "https://edmundokutuzov.art/work/cozinhar-e-arte",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/6b4a2fa3-9da3-4755-a486-69afd9bb6780.webp"
+      ]
+    },
+    {
+      "slug": "agua-e-vida",
+      "source_page": "https://edmundokutuzov.art/work/agua-e-vida-100-agua",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/3c2fdb41-db9f-4baf-bed1-005b214d3920.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/6dc31740-8de6-4e24-b5c9-36fb184e217b.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/fc302e47-d503-4b1c-87dc-940ce80f68a5.webp"
+      ]
+    },
+    {
+      "slug": "super-mares",
+      "source_page": "https://edmundokutuzov.art/work/viva-a-experiencia-no-super-mares",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/26960b51-b254-4635-8e29-397a414758bb.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/ce1b42cc-999a-4f88-b64c-d1fcdd52da51.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/66344e22-b393-424d-a1d7-c8bbc5af32b1.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/720ce27d-7b67-43b2-9a2a-59441014ce59.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/662421ce-9cd3-444b-9ed0-b3c343ab42b2.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/9e96c9af-fe30-474a-ac56-8b1dfcbcde9d.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/d2fbfd3e-e952-4ddc-9bb1-71b06c6b5c2a.webp"
+      ]
+    },
+    {
+      "slug": "we-are-giz",
+      "source_page": "https://edmundokutuzov.art/work/we-are-giz",
+      "source_urls": [
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/b3919747-8a25-4c89-a277-3a7f841e276b.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/e17dd790-b77f-435a-bb8b-9e07fbc3fdcb.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/aac7e451-31d7-45f5-992a-aa029d50672f.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/7305e8a2-1246-4277-9cd2-0e123243beec.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/42489d8e-c504-428b-a502-6987253fbc80.webp",
+        "https://qwjaoheaolpxtciljzvb.supabase.co/storage/v1/object/public/portfolio-public-assets/uploads/f46e144f-523e-4425-9636-75502112f6b8/2026/11/d0c4b4d2-7934-44e8-ab33-f85133fe3234.webp"
+      ]
+    }
+  ]
+}

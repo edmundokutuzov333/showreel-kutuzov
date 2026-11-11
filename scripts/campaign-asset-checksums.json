@@ -1,0 +1,205 @@
+{
+  "created": "2026-11-11",
+  "assets": [
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/00.webp",
+      "bytes": 25316,
+      "sha256": "e3c9db89d05fa0b630c5a6be5cf46363bcb7d7acd8e144c7bf1b948d422e837f"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/01.webp",
+      "bytes": 25090,
+      "sha256": "86b829934976b2f4377f5fc128ace9bc734ef27c8d10f6c97cc24a8f4c714164"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/02.webp",
+      "bytes": 61122,
+      "sha256": "2fcfed591db0e4834d20a93b471f6d973874b27387703cb2ca7ac1a1334006c3"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/03.webp",
+      "bytes": 57584,
+      "sha256": "d1b2466194c5e7c3f51e4fe6de767e14a09c43e0560e4b45997be2b2b2593dde"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/04.webp",
+      "bytes": 62356,
+      "sha256": "115f7a2a17ed10147d6951f9060157fbc440e6af20d49a13748c0a7a8e467693"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/05.webp",
+      "bytes": 31504,
+      "sha256": "8ea30db4c7a9637773e57e0822f32ce84211fdf08356d915d8272a336821a58c"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/06.webp",
+      "bytes": 64026,
+      "sha256": "1df7e54e5808786c4fa4ca5da342be2ac695f4b046a36350edce172d42f0d039"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/07.webp",
+      "bytes": 47892,
+      "sha256": "8adbb466f5ec94cf58754614b0ff1b98a66a013b357ed870ad5100f4baa9a274"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/08.webp",
+      "bytes": 40634,
+      "sha256": "a1b4a08f0e2da69cea56b102ec27862db2e8051e75929a7882e96f69159c233a"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/09.webp",
+      "bytes": 72020,
+      "sha256": "325e55da828e48cc2eeb17539419fd5352f0be24a6565d39b6925db07a94c1b3"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/10.webp",
+      "bytes": 390158,
+      "sha256": "31e3834c2a33617263b7a8f6de5fe50ecb2f4767396b1ea116cea87f9a90c642"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/11.webp",
+      "bytes": 430184,
+      "sha256": "994a1b25d2ddbf28153699ef6afd3c1b039a5e706dfa14016935b48bfec2151c"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/12.webp",
+      "bytes": 79004,
+      "sha256": "3346ea503edaf1b80282549e6c798a1685a5f09de2b5c2e565b45ee060651ea4"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/icor-depressao/13.webp",
+      "bytes": 82272,
+      "sha256": "5bf8402a65282e8581663d4661214bdfacb817db446bbd4eb312795e21952532"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/00.webp",
+      "bytes": 96110,
+      "sha256": "898cfe71b9500086e951ffea71ceabc1857cba13c6f5fc6d2f80a0bf23dbd775"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/01.webp",
+      "bytes": 149354,
+      "sha256": "22ce5f4dacf6c7244b39d10009bb7409fa5c8c3929a3035a0b343f02203c12ec"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/02.webp",
+      "bytes": 104326,
+      "sha256": "4611da0b05172652579481ee63b88a80ac4425304c4b67cbe124ab6c956be197"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/03.webp",
+      "bytes": 133458,
+      "sha256": "6c480fdf7530893ddb3ee8529321cb5b0f5d241eabf5892dbcbc8252194f5f6b"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/04.webp",
+      "bytes": 160146,
+      "sha256": "0c934065344a0794340e620e7be3d45e0f246b2c8ff4285f346c901fd4699cad"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/05.webp",
+      "bytes": 138490,
+      "sha256": "76b54b4667cd01be129134f582454abf4b8bb381fbf92225b32cc1aa4b16f268"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/06.webp",
+      "bytes": 147426,
+      "sha256": "f9280e458c8ddc9f8ca7640681ec80eb180cc615365cb137e8acab3dcd847e3e"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/07.webp",
+      "bytes": 161368,
+      "sha256": "22e3c2ab0e2cf4ec1faeae09c52640290df8f61103f95fdd99bc458f074251f9"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/diga-yes/08.webp",
+      "bytes": 178110,
+      "sha256": "b06855e358f05e21ba2244f7057e6053a1a37d0a7c8d7f645c170b4e963049a9"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/cozinhar-arte/00.webp",
+      "bytes": 249182,
+      "sha256": "ac363e220370a6948553896368906bddddf2f378a433b307e0ac24613db5e51d"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/agua-e-vida/00.webp",
+      "bytes": 152754,
+      "sha256": "2bff7d82404405fa14f70bcde18d229d5f1bc558fc130d7ea92dba6dd8fa5fe5"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/agua-e-vida/01.webp",
+      "bytes": 57152,
+      "sha256": "d84b2c78758bfa711e27e571f754197885a25cbb8f7653f63c23cbc4345524e7"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/agua-e-vida/02.webp",
+      "bytes": 180160,
+      "sha256": "8f8d4ced18879b4c982b638ab4c5544f792f05bfa7256b7c2abd2cb7e4679df5"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/00.webp",
+      "bytes": 88250,
+      "sha256": "f56e417ac40ba9a7174b7d6868693915a80e1c861be9128dc0a7d420e747f8fc"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/01.webp",
+      "bytes": 136754,
+      "sha256": "a060b39e3de93aead8ad2d2386edf97f7c1681289c19f8750fbe1f3471e5b444"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/02.webp",
+      "bytes": 79818,
+      "sha256": "19e5d4f227526f6c4a534457941a6829d4de90b18669661b465ba2bc2f538928"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/03.webp",
+      "bytes": 76080,
+      "sha256": "bb085a0e9e8630b702331394f7bf3f9e4a746a8f37923de7bf29cf6d66055c71"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/04.webp",
+      "bytes": 65238,
+      "sha256": "b58ed5538a061870d6c98c33fc6a9702a7aa3c5994dca02a2daa8e3998568d1f"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/05.webp",
+      "bytes": 48130,
+      "sha256": "41bbfb3bd1d1c988d72f502b86e65a9a5a55d94635fb7e4de3d48c93278c2104"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/super-mares/06.webp",
+      "bytes": 44776,
+      "sha256": "39f7efa5e825e0145d8a5a523dfc9876c6bbc669378b8ac552a800b14906700a"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/00.webp",
+      "bytes": 37470,
+      "sha256": "f431f60eef2e9c11878de10866dda70309aea82f06c895423422654a0ec2a727"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/01.webp",
+      "bytes": 24288,
+      "sha256": "8ca24b26672da99789b5db1f50fa6010394a4a2dbd6e7d19a1da848f3b446667"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/02.webp",
+      "bytes": 47312,
+      "sha256": "79a1471b3e5582461f475ce39619778a62258c63fa34e214a18a20e2d4b452ce"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/03.webp",
+      "bytes": 31340,
+      "sha256": "e7e1fd2fc2d28fee480c093e63d155f5da87a616161869b15aa38faeb19fb9c5"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/04.webp",
+      "bytes": 34856,
+      "sha256": "00520ce4a475825480d5770b6a0675d09b5978b52c1e5c49646b69843ed27ce1"
+    },
+    {
+      "file": "frontend/public/reel/campaigns/we-are-giz/05.webp",
+      "bytes": 9268,
+      "sha256": "1e0a4f8a0c039cc9c2ea87d9ebff8725a7fa15bddf6026c02e2a12f7623ceb8c"
+    }
+  ]
+}
