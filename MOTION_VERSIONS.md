@@ -90,3 +90,13 @@ a Blob download is offered; clicking Descarregar agora starts an
 immediate download. Encoding speed and support depend on available
 CPU/GPU/codec; unsupported devices are told rather than receiving
 an upscaled file or mislabeled WebM.
+
+
+#### ICOR closing frame
+The two rejected image files icor-depressao/10.webp and
+icor-depressao/12.webp were removed from the repository and campaign
+manifest. The alternate duplicates (11.webp and 13.webp) remain in
+the source gallery but are not rendered. The ten approved works show
+as 4 + 4 + 2. The last frame contains precisely 08.webp and 09.webp
+in a unique larger editorial two-card composition.
+No other campaign timing, assets or animations were changed.

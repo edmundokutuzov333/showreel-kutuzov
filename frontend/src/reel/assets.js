@@ -93,8 +93,8 @@ export async function loadAssets(onProgress) {
   if(!manifestRes.ok)throw Error("Missing original campaign gallery manifest");
   const campaignManifest=await manifestRes.json();
   if(campaignManifest.campaigns.length!==6 ||
-    campaignManifest.campaigns.reduce((n,c)=>n+c.frames.length,0)!==40)
-    throw Error("Expected forty real campaign artworks");
+    campaignManifest.campaigns.reduce((n,c)=>n+c.frames.length,0)!==38)
+    throw Error("Expected 38 approved campaign artworks");
   const frames=campaignManifest.campaigns.flatMap(c=>c.frames.map((src,index)=>({src,index,slug:c.slug})));
   const categoryIds=[21,23,26,29,37,43,50,54,57,59,96,99,101,105,110,113,117,123,127,71,72,73,77,80,87,89,90,94,95,132,134,135,137,138,141,144,147,139,140,142,143,145,146];
   const ids=[...new Set([...SEL.cinema,...SEL.corridor,...SEL.rush,89,135,...categoryIds])];

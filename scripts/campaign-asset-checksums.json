@@ -52,19 +52,9 @@
       "sha256": "325e55da828e48cc2eeb17539419fd5352f0be24a6565d39b6925db07a94c1b3"
     },
     {
-      "file": "frontend/public/reel/campaigns/icor-depressao/10.webp",
-      "bytes": 390158,
-      "sha256": "31e3834c2a33617263b7a8f6de5fe50ecb2f4767396b1ea116cea87f9a90c642"
-    },
-    {
       "file": "frontend/public/reel/campaigns/icor-depressao/11.webp",
       "bytes": 430184,
       "sha256": "994a1b25d2ddbf28153699ef6afd3c1b039a5e706dfa14016935b48bfec2151c"
-    },
-    {
-      "file": "frontend/public/reel/campaigns/icor-depressao/12.webp",
-      "bytes": 79004,
-      "sha256": "3346ea503edaf1b80282549e6c798a1685a5f09de2b5c2e565b45ee060651ea4"
     },
     {
       "file": "frontend/public/reel/campaigns/icor-depressao/13.webp",

@@ -12,7 +12,7 @@ import { buildArchive } from "./archive";
  * Timings are absolute and seekable. No artificial stand-in campaign images.
  */
 export const CAMPAIGNS=[
- {slug:"icor-depressao",title:"A DEPRESSÃO É REAL",client:"ICOR",count:14,exclude:[11,13],start:21,end:23.2},
+ {slug:"icor-depressao",title:"A DEPRESSÃO É REAL",client:"ICOR",count:12,exclude:[10,11],start:21,end:23.2},
  {slug:"diga-yes",title:"DIGA YES & VIVA O MUNDO ONLINE",client:"WEBMASTERS",count:9,exclude:[],start:23.2,end:25.4},
  {slug:"cozinhar-arte",title:"COZINHAR É ARTE",client:"PEMBE MOZ",count:1,exclude:[],extraIds:[147],start:25.4,end:27.6},
  {slug:"agua-e-vida",title:"ÁGUA É VIDA E VOCÊ É 100% ÁGUA",client:"FONTE FRESCA",count:3,exclude:[],start:27.6,end:29.8},
@@ -92,7 +92,12 @@ function layout(n,style,beat){
     {x:3.51*mirror,y:.0,h:1.31,w:3.07,r:-.06*mirror,z:-.07},
     {x:3.35*mirror,y:-1.45,h:1.30,w:3.08,r:.085*mirror,z:.05}];
 }
-/** Gallery montage: 14 images -> 3 bursts; 9 -> 2; 1 -> one authentic artwork. */
+/** ICOR-only two-card closing layout. Other campaign layouts are preserved. */
+export const ICOR_LAST_PAIR_LAYOUT = [
+  {x:-2.95,y:-.07,h:5.18,w:5.82,r:-.042,z:.30},
+  {x: 2.95,y: .07,h:5.18,w:5.82,r: .042,z:.16},
+];
+/** Each campaign uses unique published artworks in four-piece beats. */
 function campaign(A,c,i){
  const all=A.campaigns[c.slug]||[];
  if(all.length!==c.count)throw Error("Original gallery missing "+c.slug);
@@ -105,7 +110,8 @@ function campaign(A,c,i){
  for(let offset=0;offset<textures.length;offset+=4){
    const group=new THREE.Group();
    const chunk=textures.slice(offset,offset+4);
-   const poses=layout(chunk.length,i,Math.floor(offset/4));
+   const poses=c.slug==="icor-depressao" && offset===8
+     ? ICOR_LAST_PAIR_LAYOUT : layout(chunk.length,i,Math.floor(offset/4));
    const objects=chunk.map((tex,j)=>{
       const p=poses[j],mesh=slab(tex,p.h,p.w);
       mesh.userData.pose=p;group.add(mesh);return mesh;
@@ -358,7 +364,7 @@ export function selectedDevelopmentAssets(manifest,catalog){
    throw Error("A second campaign artwork was repeated");
  const ids=CATEGORIES.flatMap(c=>c.ids);
  const slugs=ids.map(id=>catalog.items.find(x=>x.id===id)?.slug);
- if(campaignImages.length!==38||new Set(campaignImages).size!==38)
+ if(campaignImages.length!==36||new Set(campaignImages).size!==36)
    throw Error("Repeated campaign art");
  if(ids.length!==33||new Set(ids).size!==ids.length||
     slugs.some(s=>!s)||new Set(slugs).size!==slugs.length)

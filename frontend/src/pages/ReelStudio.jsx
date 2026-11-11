@@ -72,7 +72,7 @@ export default function ReelStudio() {
             <h2 className="font-display text-2xl md:text-4xl font-bold mt-3">Six campaigns. No repeats.</h2>
             <div className="grid md:grid-cols-2 gap-3 mt-8">
               {[
-                ["icor-depressao","A Depressão é Real","ICOR",12,21],
+                ["icor-depressao","A Depressão é Real","ICOR",10,21],
                 ["diga-yes","Diga YES & Viva o Mundo Online","WEBMASTERS",9,23.2],
                 ["cozinhar-arte","Cozinhar é Arte","PEMBE MOZ",2,25.4],
                 ["agua-e-vida","Água é Vida e Você é 100% Água","FONTE FRESCA",3,27.6],

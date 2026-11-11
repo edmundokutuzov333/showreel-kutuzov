@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { LOGOS } from './assets';
-import { CAMPAIGNS, CATEGORIES, BRAND_NAMES, CAMPAIGN_FILM_SCENES, selectedDevelopmentAssets } from './campaignFilm';
+import { CAMPAIGNS, CATEGORIES, BRAND_NAMES, CAMPAIGN_FILM_SCENES, ICOR_LAST_PAIR_LAYOUT, selectedDevelopmentAssets } from './campaignFilm';
 import { EK_POLYGONS } from './brandMark';
 const manifest=require('../../public/reel/campaigns/manifest.json');
 const catalog=require('../../public/reel/catalog.json');
@@ -11,10 +11,27 @@ describe('Final V3 editorial/provenance rules',()=>{
    expect(CAMPAIGN_FILM_SCENES[1]).toEqual(['V2 GALAXY & INDEX',3.6,21]);
  });
  test('all six gallery sources retained, repeated ICOR visuals excluded',()=>{
-   expect(manifest.campaigns.map(c=>c.frames.length)).toEqual([14,9,1,3,7,6]);
-   expect(manifest.campaigns.flatMap(c=>c.frames)).toHaveLength(40);
-   expect(CAMPAIGNS[0].exclude).toEqual([11,13]);
-   expect(CAMPAIGNS.reduce((n,c)=>n+c.count-c.exclude.length,0)).toBe(38);
+   expect(manifest.campaigns.map(c=>c.frames.length)).toEqual([12,9,1,3,7,6]);
+   expect(manifest.campaigns.flatMap(c=>c.frames)).toHaveLength(38);
+   expect(CAMPAIGNS[0].exclude).toEqual([10,11]);
+   expect(CAMPAIGNS.reduce((n,c)=>n+c.count-c.exclude.length,0)).toBe(36);
+ });
+ test('ICOR closing shot contains 08 and 09; rejected 10 and 12 are absent',()=>{
+   const files=manifest.campaigns[0].frames;
+   const chosen=files.filter((_,i)=>!CAMPAIGNS[0].exclude.includes(i));
+   expect(chosen.slice(-2)).toEqual([
+     '/reel/campaigns/icor-depressao/08.webp',
+     '/reel/campaigns/icor-depressao/09.webp'
+   ]);
+   expect(chosen).not.toContain('/reel/campaigns/icor-depressao/10.webp');
+   expect(chosen).not.toContain('/reel/campaigns/icor-depressao/12.webp');
+   expect(fs.existsSync(path.resolve('public/reel/campaigns/icor-depressao/10.webp'))).toBe(false);
+   expect(fs.existsSync(path.resolve('public/reel/campaigns/icor-depressao/12.webp'))).toBe(false);
+   expect(ICOR_LAST_PAIR_LAYOUT).toHaveLength(2);
+   ICOR_LAST_PAIR_LAYOUT.forEach(p=>{
+     expect(p.h).toBeGreaterThan(5);
+     expect(p.w).toBeGreaterThan(5.5);
+   });
  });
  test('only four categories, in complete three-artwork beats',()=>{
    expect(CATEGORIES.map(c=>c.name)).toEqual([
@@ -28,9 +45,9 @@ describe('Final V3 editorial/provenance rules',()=>{
  test('no duplicate filename, art source ID or project slug in development',()=>{
    const {campaignImages,categoryIds,categorySlugs}=
      selectedDevelopmentAssets(manifest,catalog);
-   expect(campaignImages.length).toBe(38);
+   expect(campaignImages.length).toBe(36);
    expect(categoryIds.length).toBe(33);
-   expect(new Set(campaignImages).size).toBe(38);
+   expect(new Set(campaignImages).size).toBe(36);
    expect(new Set(categorySlugs).size).toBe(33);
    campaignImages.forEach(src=>{
      expect(fs.existsSync(path.resolve('public'+src))).toBe(true);
