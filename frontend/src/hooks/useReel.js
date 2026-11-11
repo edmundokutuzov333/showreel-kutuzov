@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ReelEngine } from "@/reel/engine";
 
-const BACKEND = process.env.REACT_APP_BACKEND_URL;
+// Keep the reel functional when the hosting project has no backend env yet.
+// A configured API origin still wins; otherwise Vercel's same-origin functions
+// under /api handle narration and proxy the generated voice files.
+const BACKEND = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "");
+const API = `${BACKEND}/api`;
 
 export function useReel() {
   const canvasRef = useRef(null);
@@ -29,10 +33,10 @@ export function useReel() {
     try {
       if (l === "off") {
         await eng.setNarration(null);
-        const { data } = await axios.get(`${BACKEND}/api/reel/narration`, { params: { lang: "en" } });
+        const { data } = await axios.get(`${API}/reel/narration`, { params: { lang: "en" } });
         setLines(data.lines);
       } else {
-        const { data } = await axios.get(`${BACKEND}/api/reel/narration`, { params: { lang: l } });
+        const { data } = await axios.get(`${API}/reel/narration`, { params: { lang: l } });
         setLines(data.lines);
         await eng.setNarration(data.lines, BACKEND);
       }
