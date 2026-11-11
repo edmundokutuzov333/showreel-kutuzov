@@ -10,6 +10,7 @@ const API = `${BACKEND}/api`;
 
 export function useReel() {
   const [version, setVersionState] = useState("v3");
+  const langRef = useRef("en");
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -58,7 +59,7 @@ export function useReel() {
     eng.onEnd = () => setPlaying(false);
     let alive = true;
     eng.load((p) => alive && setProgress(p))
-      .then(() => alive && loadVO(lang))
+      .then(() => alive && loadVO(langRef.current))
       .then(() => { if (!alive || !eng.explore) return; eng.explore.onHover = (it) => setHover(it); setReady(true); })
       .catch(() => alive && setError("Falha ao carregar os assets do showreel."));
     return () => { alive = false; eng.dispose(); };
@@ -85,7 +86,7 @@ export function useReel() {
     if (!eng.playing) { await eng.play(); setPlaying(true); }
   }, [recording]);
 
-  const setLang = useCallback(async (l) => { setLangState(l); await loadVO(l); }, [loadVO]);
+  const setLang = useCallback(async (l) => { langRef.current = l; setLangState(l); await loadVO(l); }, [loadVO]);
 
   const exportVideo = useCallback(async () => {
     const eng = engineRef.current;
