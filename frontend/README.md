@@ -1,71 +1,43 @@
-# Getting Started with Create React App
+# Frontend · Edmundo Kutuzov Showreel
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> **The work moves.** A React 19 + Three.js studio for a real-time, interactive 16:9 creative showreel.
 
-## Available Scripts
+The **complete and maintained project documentation** lives in the repository root:
 
-In the project directory, you can run:
+### [→ Read the complete project README](../README.md)
 
-### `npm start`
+It includes architecture, three production experiences, source assets and provenance, cinematic timeline, sound design and narration, export limitations, APIs, Vercel deployment, tests, troubleshooting, licensing and technical audit.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Run locally
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+# From this frontend/ directory:
+corepack enable
+corepack yarn install --frozen-lockfile
+corepack yarn start
+```
 
-### `npm test`
+The UI is available at [http://localhost:3000](http://localhost:3000). The Create React App development server **does not automatically expose the Vercel** `/api/reel/narration` **function**. To hear local EN/PT narration, run the optional FastAPI backend and set `REACT_APP_BACKEND_URL`, or use a local environment that supports the Vercel functions. Without narration, the generated instrumental remains usable.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Verify
 
-### `npm run build`
+```bash
+CI=true corepack yarn test --watch=false --runInBand
+CI=true corepack yarn build
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The production build is written to `frontend/build/` and the tests cover versions, editorial provenance and voice masters. Always perform manual GPU/browser and downloaded-video checks before a commercial release.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Main entry points
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Responsibility | Source |
+|---|---|
+| Studio UI | [src/pages/ReelStudio.jsx](src/pages/ReelStudio.jsx) |
+| State and controls | [src/hooks/useReel.js](src/hooks/useReel.js) |
+| WebGL playback and recording | [src/reel/engine.js](src/reel/engine.js) |
+| Active V3 scene choreography | [src/reel/campaignFilm.js](src/reel/campaignFilm.js) |
+| Generative score and narration | [src/reel/audio.js](src/reel/audio.js) |
+| Production narration API | [api/reel/narration.js](api/reel/narration.js) |
+| Creative assets | [public/reel/](public/reel/) |
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
+**Documentation reference:** 11 November 2026. For the authoritative scope, caveats and deployment snapshot, use the root README.
