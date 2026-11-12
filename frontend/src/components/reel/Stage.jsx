@@ -3,6 +3,14 @@ import { Play } from "lucide-react";
 import ExploreOverlay from "@/components/reel/ExploreOverlay";
 
 function BreachGate({ r }) {
+  if (r.isVertical) return (
+    <button data-testid="breach-gate" onClick={r.toggle}
+      className="group absolute inset-0 flex flex-col items-center justify-center gap-5 bg-[var(--bg)] text-bone">
+      <span className="font-mono text-[10px] uppercase tracking-[.3em] text-[#9cc6f5]">V3 / {r.format==="story"?"9:16":"4:5"}</span>
+      <span className="font-display text-3xl sm:text-4xl font-bold text-center">THE WORK<br />MOVES.</span>
+      <span className="font-mono text-[10px] tracking-[.25em] text-white/60">TOCAR PARA REPRODUZIR</span>
+    </button>
+  );
   return (
     <button data-testid="breach-gate" onClick={r.toggle} className="group absolute inset-0 bg-[var(--bg)] text-left overflow-hidden">
       <span className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--ember)] shadow-[0_0_24px_4px_rgba(68,102,255,0.55)] gate-line" />
@@ -25,7 +33,8 @@ const Stage = forwardRef(function Stage({ r }, ref) {
   const fresh = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time < 0.01;
   const paused = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= 0.01 && r.time < r.duration - 0.1;
   return (
-    <div ref={ref} data-testid="reel-stage" className={`reel-stage relative w-full aspect-video bg-black overflow-hidden ${r.mode === "explore" ? "cursor-grab active:cursor-grabbing" : ""}`}
+    <div ref={ref} data-testid="reel-stage" className={`reel-stage relative w-full ${r.isVertical ? "" : "aspect-video"} bg-black overflow-hidden ${r.mode === "explore" ? "cursor-grab active:cursor-grabbing" : ""}`}
+      style={r.isVertical ? {aspectRatio:r.aspectRatio} : undefined}
       onPointerMove={(e) => r.pointer("move", ...pos(e))}
       onPointerDown={(e) => r.pointer("down", ...pos(e))}
       onPointerUp={(e) => r.pointer("up", ...pos(e))}
@@ -49,7 +58,7 @@ const Stage = forwardRef(function Stage({ r }, ref) {
           </span>
         </button>
       )}
-      {r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= r.duration - 0.1 && (
+      {r.ready && !r.isVertical && !r.playing && r.recording === null && r.mode === "reel" && r.time >= r.duration - 0.1 && (
         <div className="absolute bottom-4 right-4 flex gap-2">
           <button data-testid="stage-explore-button" onClick={() => r.setMode("explore")}
             className="h-10 px-4 rounded-full bg-[var(--primary)] font-mono text-[10px] tracking-[0.25em] uppercase text-white hover:bg-[#5a78ff] transition-colors duration-200">
