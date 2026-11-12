@@ -207,7 +207,7 @@ export default function SiteTourV4(){
         </div>:<div style={{position:"absolute",inset:"5% 4%",background:"#0a1322",border:"1px solid #425d83",borderRadius:12,overflow:"hidden",boxShadow:"0 0 35px #061020"}}>
           <div style={{height:"7%",display:"flex",alignItems:"center",gap:7,background:"#14223b",padding:"0 2%"}}>
             {["#f27b80","#f4bf6c","#7cddb4"].map(c=><span key={c} style={{height:9,width:9,borderRadius:"50%",background:c}}/>)}
-            <span style={{flex:1,textAlign:"center",fontSize:"clamp(8px,1vw,14px)",color:"#a7c7ed",...mono}}>⌁ edmundo'kutuzov.art'+scene.path</span>
+            <span style={{flex:1,textAlign:"center",fontSize:"clamp(8px,1vw,14px)",color:"#a7c7ed",...mono}}>{"⌁ edmundokutuzov.art" + scene.path}</span>
           </div>
           <div style={{height:"11%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 4%",borderBottom:"1px solid #344c68"}}>
             <span style={{fontSize:"clamp(20px,2.7vw,36px)",fontWeight:800}}>EK.</span>
