@@ -111,7 +111,7 @@ function createWorld(canvas){
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(38,1,.1,100);
   camera.position.set(0,.48,7.8);
-  const root=new THREE.Group();root.position.y=.6;scene.add(root);
+  const root=new THREE.Group();root.position.y=1.25;scene.add(root);
   const light=new THREE.AmbientLight(0x8ab9f9,1.2);scene.add(light);
   const left=new THREE.PointLight(0x2876ff,82,18);left.position.set(-3,2.6,3);scene.add(left);
   const right=new THREE.PointLight(0x9cc6f5,74,18);right.position.set(3,2.1,1);scene.add(right);
