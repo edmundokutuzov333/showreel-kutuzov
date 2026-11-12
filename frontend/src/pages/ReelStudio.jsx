@@ -51,6 +51,17 @@ export default function ReelStudio() {
             <span className="block mt-1 font-mono text-[10px] uppercase tracking-[.15em] text-white/50">{v.sub}</span>
           </button>)}
         </section>
+        <section className="mx-auto mb-7 max-w-[980px]" aria-label="Versão 4 — Site Experience">
+          <a data-testid="reel-version-v4" href="/v4"
+            className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-[#9cc6f5]/40 bg-gradient-to-r from-[#15284b] via-[#0e1a31] to-[#0a0d15] px-5 py-5 hover:border-[#9cc6f5] transition-colors">
+            <div>
+              <p className="font-mono text-[10px] text-[#9cc6f5] tracking-[.25em] uppercase">04 / New cinematic edition</p>
+              <h2 className="font-display font-extrabold text-xl sm:text-2xl mt-2">Versão 4 <span className="font-normal text-white/65">/ Enter the Experience</span></h2>
+              <p className="font-mono text-[10px] text-white/60 mt-2">30 segundos · navegação pelo site · Jarvis simulado · V1–V3 preservadas</p>
+            </div>
+            <span className="shrink-0 rounded-full border border-[#9cc6f5]/45 px-5 py-3 font-mono text-[10px] text-[#9cc6f5] group-hover:bg-[#9cc6f5] group-hover:text-[#0a0d15] transition-colors">ABRIR V4 ↗</span>
+          </a>
+        </section>
         {r.version==="v3"&&(
           <section data-testid="reel-format-selector" aria-label="Variações de formato da versão 3"
             className="mx-auto mb-7 max-w-[980px]">
