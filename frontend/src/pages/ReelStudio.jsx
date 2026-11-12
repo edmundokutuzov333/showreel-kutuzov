@@ -14,16 +14,16 @@ export default function ReelStudio() {
   const r=useReel();
   const stageRef=useRef(null);
   const fullscreen=()=>stageRef.current?.requestFullscreen?.();
-  const selected=VERSIONS.find(v=>v.id===r.version);
+  const selected=VERSIONS.find(v=>v.id===(r.isVertical?"v3":r.version));
   return (
     <div className="grain min-h-screen bg-[var(--bg)] text-bone">
       <header className="px-6 md:px-12 pt-8 flex items-start justify-between gap-6">
         <div className="reveal">
           <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--ember)]">EDMUNDO KUTUZOV / MOTION ARCHIVE / 2026</p>
-          <h1 data-testid="studio-title" className="mt-2 font-display text-3xl md:text-5xl font-bold leading-none">{r.version==="v3"?"The work moves.":"Break the frame."}</h1>
+          <h1 data-testid="studio-title" className="mt-2 font-display text-3xl md:text-5xl font-bold leading-none">{(r.version==="v3"||r.isVertical)?"The work moves.":"Break the frame."}</h1>
         </div>
         <div className="text-right font-mono text-[10px] tracking-[0.25em] uppercase text-white/45 space-y-1">
-          <p>16:9 · 1920×1080 · {r.duration}s</p>
+          <p>{r.format==="story"?"9:16 · 1080×1920":r.format==="feed"?"4:5 · 1080×1350":"16:9 · 1920×1080"} · {r.duration}s</p>
           <p>Art Director · Maputo</p>
           <a href="https://edmundokutuzov.art" target="_blank" rel="noreferrer" className="text-[var(--ember)] hover:text-white">edmundokutuzov.art ↗</a>
         </div>
@@ -31,26 +31,58 @@ export default function ReelStudio() {
       <main className="px-6 md:px-12 pt-10 pb-28 max-w-[1500px] mx-auto">
         <section aria-label="Seleccionar versão" className="mx-auto mb-7 grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-[980px]" data-testid="reel-version-selector">
           {VERSIONS.map(v=><button key={v.id} type="button" onClick={()=>r.setVersion(v.id)}
-            disabled={r.recording!==null} aria-pressed={v.id===r.version} data-testid={`reel-version-${v.id}`}
-            className={`text-left group rounded-xl px-5 py-4 border transition-all duration-300 disabled:opacity-40 ${v.id===r.version?"border-[#9cc6f5] bg-[#4466ff]/15 shadow-[inset_0_1px_0_rgba(156,198,245,.18)]":"border-white/10 bg-white/[.025] hover:border-white/30"}`}>
+            disabled={r.recording!==null} aria-pressed={v.id===r.version || (v.id==="v3" && r.isVertical)} data-testid={`reel-version-${v.id}`}
+            className={`text-left group rounded-xl px-5 py-4 border transition-all duration-300 disabled:opacity-40 ${(v.id===r.version || (v.id==="v3" && r.isVertical))?"border-[#9cc6f5] bg-[#4466ff]/15 shadow-[inset_0_1px_0_rgba(156,198,245,.18)]":"border-white/10 bg-white/[.025] hover:border-white/30"}`}>
             <div className="flex justify-between items-center">
               <span className="font-display text-lg font-bold">{v.label}</span>
-              <span className={`h-2 w-2 rounded-full ${v.id===r.version?"bg-[#9cc6f5]":"bg-white/20"}`}/>
+              <span className={`h-2 w-2 rounded-full ${(v.id===r.version || (v.id==="v3" && r.isVertical))?"bg-[#9cc6f5]":"bg-white/20"}`}/>
             </div>
             <span className="block mt-1 font-mono text-[10px] uppercase tracking-[.15em] text-white/50">{v.sub}</span>
           </button>)}
         </section>
-        <div className="mx-auto" style={{maxWidth:"max(640px, calc((100vh - 260px) * 16 / 9))"}}>
+        {(r.version==="v3" || r.isVertical) && (
+          <section aria-label="Formato da Versão 3" data-testid="reel-format-selector"
+            className="mx-auto mb-7 max-w-[980px]">
+            <p className="font-mono text-[10px] uppercase tracking-[.23em] text-[#9cc6f5] mb-3">
+              V3 / ASPECT RATIO / ADAPTAÇÕES INDEPENDENTES
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {[
+                ["v3","Oficial","16:9 · 1920 × 1080"],
+                ["v3-story","Stories / Reels","9:16 · 1080 × 1920"],
+                ["v3-feed","Feed vertical","4:5 · 1080 × 1350"]
+              ].map(([id,name,description])=>
+                <button type="button" key={id} onClick={()=>r.setVersion(id)}
+                  aria-pressed={r.version===id} disabled={r.recording!==null}
+                  data-testid={"reel-format-"+id}
+                  className={"rounded-xl border p-4 text-left transition-colors disabled:opacity-40 "+
+                    (r.version===id
+                      ? "border-[#9cc6f5] bg-[#4466ff]/15"
+                      : "border-white/15 bg-white/[.025] hover:border-white/40")}>
+                  <span className="block font-display text-lg font-bold">{name}</span>
+                  <span className="block font-mono text-[10px] text-white/55 mt-1">{description}</span>
+                </button>)}
+            </div>
+          </section>
+        )}
+        <div className="mx-auto" style={{maxWidth:r.format==="story"?"480px":r.format==="feed"?"570px":"max(640px, calc((100vh - 260px) * 16 / 9))"}}>
           <Stage key={r.version} ref={stageRef} r={r}/>
           <Controls r={r} onFullscreen={fullscreen}/>
           {r.error&&<p role="status" data-testid="reel-error" className="mt-4 font-mono text-[11px] text-[#ffadad]">{r.error}</p>}
           <p className="mt-4 font-mono text-[11px] leading-relaxed text-white/50">{selected.desc}</p>
+          {r.isVertical && (
+            <p className="mt-2 font-mono text-[11px] leading-relaxed text-[#9cc6f5]/80">
+              Adaptação autónoma da V3: as obras, as marcas e a assinatura 3D
+              são reenquadradas para {r.format==="story"?"Stories e Reels":"o feed vertical"}.
+              A versão oficial 16:9 permanece inalterada.
+            </p>
+          )}
           <p className="mt-3 font-mono text-[10px] tracking-[.09em] text-white/35">
             Reprodução em tempo real. A exportação MP4 renderiza cada fotograma na resolução seleccionada, com banda sonora instrumental e sem voz. Quando concluir, clique em Descarregar agora. Mantenha este separador visível. A extensão MP4 ou WebM depende do navegador.
           </p>
         </div>
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}
-        {r.version==="v3"&&<div className="max-w-[1180px] mx-auto mt-20">
+        {(r.version==="v3"||r.isVertical)&&<div className="max-w-[1180px] mx-auto mt-20">
           <section aria-label="Capítulos do filme" className="border-t border-white/15 pt-8">
             <p className="font-mono text-[10px] text-[#9cc6f5] tracking-[.3em] uppercase">THE FINAL CUT / V2 OPENING / 60 SECONDS</p>
             <div className="mt-3 flex flex-wrap justify-between gap-4 items-end">
