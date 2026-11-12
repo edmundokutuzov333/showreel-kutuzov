@@ -44,10 +44,12 @@ export default function Controls({ r, onFullscreen }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {!r.isVertical && (
           <button data-testid="explore-mode-button" onClick={() => r.setMode(r.mode === "explore" ? "reel" : "explore")} disabled={!r.ready || busy}
             className={`h-11 px-5 rounded-full border font-mono text-[11px] tracking-[0.22em] uppercase flex items-center gap-2 transition-colors duration-200 disabled:opacity-40 ${r.mode === "explore" ? "bg-[var(--ember)] text-[var(--bg)] border-[var(--ember)]" : "border-white/12 text-bone hover:bg-white hover:text-[var(--bg)]"}`}>
             <Orbit size={15} /> {r.mode === "explore" ? "A explorar" : "Explorar arquivo"}
           </button>
+          )}
           <IconBtn testid="fullscreen-button" onClick={onFullscreen} disabled={!r.ready} label="Ecrã inteiro"><Maximize2 size={16} /></IconBtn>
           <button data-testid="export-video-button" onClick={r.exportVideo} disabled={!r.ready || busy}
             className="h-11 px-5 rounded-full bg-[var(--primary)] text-white font-mono text-[11px] tracking-[0.22em] uppercase flex items-center gap-2 hover:bg-[#5a78ff] transition-colors duration-200 disabled:opacity-50">
