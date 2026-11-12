@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ReelEngine } from "@/reel/engine";
+import { PortraitReelEngine } from "@/reel/portraitEngine";
 
 // Keep the reel functional when the hosting project has no backend env yet.
 // A configured API origin still wins; otherwise Vercel's same-origin functions
@@ -9,6 +10,7 @@ const API = `${BACKEND}/api`;
 
 export function useReel() {
   const [version, setVersionState] = useState("v3");
+  const [format, setFormatState] = useState("wide");
   const langRef = useRef("off");
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
@@ -49,7 +51,7 @@ export function useReel() {
   }, []);
 
   useEffect(() => {
-    const eng = new ReelEngine(canvasRef.current, version);
+    const eng = format==="wide" ? new ReelEngine(canvasRef.current, version) : new PortraitReelEngine(canvasRef.current, format);
     engineRef.current = eng;
     window.__reel = eng;
     eng.onTime = (t) => setTime(t);
@@ -60,7 +62,7 @@ export function useReel() {
       .then(() => { if (!alive || !eng.explore) return; eng.explore.onHover = (it) => setHover(it); setReady(true); })
       .catch(() => alive && setError("Falha ao carregar os assets do showreel."));
     return () => { alive = false; eng.dispose(); };
-  }, [loadVO, version]);
+  }, [loadVO, version, format]);
 
   const toggle = useCallback(async () => {
     const eng = engineRef.current;
@@ -99,19 +101,22 @@ export function useReel() {
     setRecording(0);
     setPlaying(true);
     try {
-      const { blob, ext, width, height, fps } = await eng.recordMp4(quality, (p) => setRecording(p));
+      const preset=format==="wide"?quality:format;
+      const { blob, ext, width, height, fps } = await eng.recordMp4(preset, (p) => setRecording(p));
       const url = URL.createObjectURL(blob);
       downloadUrlRef.current = url;
-      const name = "edmundo-kutuzov-" + version + "-instrumental-" + quality + "-16x9." + ext;
+      const label=format==="wide"?quality+"-16x9":format==="story"?
+        "stories-9x16-1080x1920":"feed-4x5-1080x1350";
+      const name="edmundo-kutuzov-"+version+"-instrumental-"+label+"."+ext;
       // A fresh click is required: automatic downloads after 60s are often blocked.
-      setDownload({ url, name, size: blob.size, width, height, fps, quality });
+      setDownload({ url, name, size: blob.size, width, height, fps, quality:format==="wide"?quality:format });
     } catch (e) {
       setError(e.message || "A exportação falhou.");
     } finally {
       setRecording(null);
       setPlaying(false);
     }
-  }, [recording, version, quality]);
+  }, [recording, version, quality, format]);
 
   const setMode = useCallback((m) => {
     const eng = engineRef.current;
@@ -148,9 +153,21 @@ export function useReel() {
     if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
     downloadUrlRef.current = null;
     setReady(false); setPlaying(false); setError(""); setProgress(0); setDownload(null);
-    setTime(0); setModeState("reel"); setSelected(null); setVersionState(v);
+    setTime(0); setModeState("reel"); setSelected(null);
+    if(v!=="v3")setFormatState("wide");
+    setVersionState(v);
   }, [version, recording]);
 
-  return { quality, setQualityPreset, version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
+  const setFormat=useCallback((next)=>{
+    if(!["wide","story","feed"].includes(next)||recording!==null||
+       next===format||version!=="v3")return;
+    if(downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
+    downloadUrlRef.current=null;
+    setDownload(null);setReady(false);setPlaying(false);setError("");
+    setProgress(0);setTime(0);setModeState("reel");setSelected(null);
+    setFilterState("ALL");setFormatState(next);
+  },[format,version,recording]);
+
+  return { format, setFormat, quality, setQualityPreset, version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
 }
 

@@ -4,6 +4,16 @@ import Stage from "@/components/reel/Stage";
 import Controls from "@/components/reel/Controls";
 import Storyboard from "@/components/reel/Storyboard";
 
+const FORMATS=[
+  {id:"wide",label:"Original · 16:9",detail:"1920 × 1080 · original preservado"},
+  {id:"story",label:"Stories · 9:16",detail:"1080 × 1920 · edição vertical independente"},
+  {id:"feed",label:"Feed vertical · 4:5",detail:"1080 × 1350 · edição vertical independente"},
+];
+const OUTPUT={
+  wide:{ratio:"16:9",width:1920,height:1080},
+  story:{ratio:"9:16",width:1080,height:1920},
+  feed:{ratio:"4:5",width:1080,height:1350},
+};
 const VERSIONS = [
   {id:"v1", label:"Versão 1", sub:"Editorial · reconstrução", desc:"Homenagem programada ao Motion V1 de 52 segundos. O MP4 histórico não está neste repositório."},
   {id:"v2", label:"Versão 2", sub:"Original · arquivo 3D", desc:"A experiência interactiva original preservada: galáxia, campanhas, clientes e assinatura."},
@@ -15,6 +25,7 @@ export default function ReelStudio() {
   const stageRef=useRef(null);
   const fullscreen=()=>stageRef.current?.requestFullscreen?.();
   const selected=VERSIONS.find(v=>v.id===r.version);
+  const output=OUTPUT[r.format];
   return (
     <div className="grain min-h-screen bg-[var(--bg)] text-bone">
       <header className="px-6 md:px-12 pt-8 flex items-start justify-between gap-6">
@@ -23,7 +34,7 @@ export default function ReelStudio() {
           <h1 data-testid="studio-title" className="mt-2 font-display text-3xl md:text-5xl font-bold leading-none">{r.version==="v3"?"The work moves.":"Break the frame."}</h1>
         </div>
         <div className="text-right font-mono text-[10px] tracking-[0.25em] uppercase text-white/45 space-y-1">
-          <p>16:9 · 1920×1080 · {r.duration}s</p>
+          <p>{output.ratio} · {output.width}×{output.height} · {r.duration}s</p>
           <p>Art Director · Maputo</p>
           <a href="https://edmundokutuzov.art" target="_blank" rel="noreferrer" className="text-[var(--ember)] hover:text-white">edmundokutuzov.art ↗</a>
         </div>
@@ -40,13 +51,32 @@ export default function ReelStudio() {
             <span className="block mt-1 font-mono text-[10px] uppercase tracking-[.15em] text-white/50">{v.sub}</span>
           </button>)}
         </section>
-        <div className="mx-auto" style={{maxWidth:"max(640px, calc((100vh - 260px) * 16 / 9))"}}>
-          <Stage key={r.version} ref={stageRef} r={r}/>
+        {r.version==="v3"&&(
+          <section data-testid="reel-format-selector" aria-label="Variações de formato da versão 3"
+            className="mx-auto mb-7 max-w-[980px]">
+            <p className="mb-3 font-mono text-[10px] tracking-[.22em] uppercase text-[#9cc6f5]">
+              V3 · Três composições independentes
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {FORMATS.map(f=><button key={f.id} type="button"
+                data-testid={"reel-format-"+f.id} aria-pressed={r.format===f.id}
+                disabled={r.recording!==null} onClick={()=>r.setFormat(f.id)}
+                className={"rounded-xl border text-left px-4 py-3 transition-colors disabled:opacity-40 "+
+                  (r.format===f.id?"bg-[#4466ff]/15 border-[#9cc6f5]":"bg-white/[.025] border-white/15 hover:border-white/40")}>
+                <span className="block font-display font-bold text-sm">{f.label}</span>
+                <span className="block mt-1 font-mono text-[9px] tracking-wider text-white/50">{f.detail}</span>
+              </button>)}
+            </div>
+          </section>
+        )}
+        <div className="mx-auto" style={{maxWidth:r.format==="wide"?
+          "max(640px, calc((100vh - 260px) * 16 / 9))":"min(100%, 560px)"}}>
+          <Stage key={r.version+"-"+r.format} ref={stageRef} r={r}/>
           <Controls r={r} onFullscreen={fullscreen}/>
           {r.error&&<p role="status" data-testid="reel-error" className="mt-4 font-mono text-[11px] text-[#ffadad]">{r.error}</p>}
           <p className="mt-4 font-mono text-[11px] leading-relaxed text-white/50">{selected.desc}</p>
           <p className="mt-3 font-mono text-[10px] tracking-[.09em] text-white/35">
-            Reprodução em tempo real. A exportação MP4 renderiza cada fotograma na resolução seleccionada, com banda sonora instrumental e sem voz. Quando concluir, clique em Descarregar agora. Mantenha este separador visível. A extensão MP4 ou WebM depende do navegador.
+            Reprodução em tempo real. A exportação MP4 usa H.264 e instrumental AAC, em fotogramas renderizados na resolução real seleccionada. O original mantém as quatro qualidades; Stories exporta em 1080×1920 e o feed em 1080×1350. Quando terminar, clique em Descarregar agora. Mantenha o separador aberto.
           </p>
         </div>
         {r.version==="v2"&&<Storyboard time={r.time} lines={r.lines} onSeek={r.seek}/>}

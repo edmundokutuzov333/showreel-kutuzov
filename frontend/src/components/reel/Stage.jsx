@@ -25,7 +25,8 @@ const Stage = forwardRef(function Stage({ r }, ref) {
   const fresh = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time < 0.01;
   const paused = r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= 0.01 && r.time < r.duration - 0.1;
   return (
-    <div ref={ref} data-testid="reel-stage" className={`reel-stage relative w-full aspect-video bg-black overflow-hidden ${r.mode === "explore" ? "cursor-grab active:cursor-grabbing" : ""}`}
+    <div ref={ref} data-testid="reel-stage" className={`reel-stage relative w-full bg-black overflow-hidden ${r.format==="wide"?"aspect-video":""} ${r.mode === "explore" ? "cursor-grab active:cursor-grabbing" : ""}`}
+      style={r.format==="wide"?undefined:{aspectRatio:r.format==="story"?"9 / 16":"4 / 5"}}
       onPointerMove={(e) => r.pointer("move", ...pos(e))}
       onPointerDown={(e) => r.pointer("down", ...pos(e))}
       onPointerUp={(e) => r.pointer("up", ...pos(e))}
@@ -51,10 +52,10 @@ const Stage = forwardRef(function Stage({ r }, ref) {
       )}
       {r.ready && !r.playing && r.recording === null && r.mode === "reel" && r.time >= r.duration - 0.1 && (
         <div className="absolute bottom-4 right-4 flex gap-2">
-          <button data-testid="stage-explore-button" onClick={() => r.setMode("explore")}
+          {r.format==="wide"&&<button data-testid="stage-explore-button" onClick={() => r.setMode("explore")}
             className="h-10 px-4 rounded-full bg-[var(--primary)] font-mono text-[10px] tracking-[0.25em] uppercase text-white hover:bg-[#5a78ff] transition-colors duration-200">
             Explorar o arquivo →
-          </button>
+          </button>}
           <button data-testid="stage-replay-button" onClick={r.restart}
             className="h-10 px-4 rounded-full bg-black/50 backdrop-blur-md border border-white/20 font-mono text-[10px] tracking-[0.25em] uppercase text-white hover:bg-white hover:text-black transition-colors duration-200">
             ↺ Rever
