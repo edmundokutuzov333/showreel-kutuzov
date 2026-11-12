@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ReelEngine } from "@/reel/engine";
+import { VerticalReelEngine } from "@/reel/verticalEngine";
 
 // Keep the reel functional when the hosting project has no backend env yet.
 // A configured API origin still wins; otherwise Vercel's same-origin functions
@@ -9,6 +10,9 @@ const API = `${BACKEND}/api`;
 
 export function useReel() {
   const [version, setVersionState] = useState("v3");
+  const format = version === "v3-story" ? "story" : version === "v3-feed" ? "feed" : null;
+  const isVertical = format !== null;
+  const aspectRatio = format === "story" ? "9 / 16" : format === "feed" ? "4 / 5" : "16 / 9";
   const langRef = useRef("off");
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
@@ -49,7 +53,9 @@ export function useReel() {
   }, []);
 
   useEffect(() => {
-    const eng = new ReelEngine(canvasRef.current, version);
+    const eng = isVertical
+      ? new VerticalReelEngine(canvasRef.current, format)
+      : new ReelEngine(canvasRef.current, version);
     engineRef.current = eng;
     window.__reel = eng;
     eng.onTime = (t) => setTime(t);
@@ -60,7 +66,7 @@ export function useReel() {
       .then(() => { if (!alive || !eng.explore) return; eng.explore.onHover = (it) => setHover(it); setReady(true); })
       .catch(() => alive && setError("Falha ao carregar os assets do showreel."));
     return () => { alive = false; eng.dispose(); };
-  }, [loadVO, version]);
+  }, [loadVO, version, isVertical, format]);
 
   const toggle = useCallback(async () => {
     const eng = engineRef.current;
@@ -102,7 +108,8 @@ export function useReel() {
       const { blob, ext, width, height, fps } = await eng.recordMp4(quality, (p) => setRecording(p));
       const url = URL.createObjectURL(blob);
       downloadUrlRef.current = url;
-      const name = "edmundo-kutuzov-" + version + "-instrumental-" + quality + "-16x9." + ext;
+      const aspectTag = format === "story" ? "9x16" : format === "feed" ? "4x5" : "16x9";
+      const name = "edmundo-kutuzov-" + version + "-instrumental-" + quality + "-" + aspectTag + "." + ext;
       // A fresh click is required: automatic downloads after 60s are often blocked.
       setDownload({ url, name, size: blob.size, width, height, fps, quality });
     } catch (e) {
@@ -111,7 +118,7 @@ export function useReel() {
       setRecording(null);
       setPlaying(false);
     }
-  }, [recording, version, quality]);
+  }, [recording, version, quality, format]);
 
   const setMode = useCallback((m) => {
     const eng = engineRef.current;
@@ -144,13 +151,13 @@ export function useReel() {
   }, []);
 
   const setVersion = useCallback((v) => {
-    if (!["v1","v2","v3"].includes(v) || v === version || recording !== null) return;
+    if (!["v1","v2","v3","v3-story","v3-feed"].includes(v) || v === version || recording !== null) return;
     if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current);
     downloadUrlRef.current = null;
     setReady(false); setPlaying(false); setError(""); setProgress(0); setDownload(null);
     setTime(0); setModeState("reel"); setSelected(null); setVersionState(v);
   }, [version, recording]);
 
-  return { quality, setQualityPreset, version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
+  return { format, isVertical, aspectRatio, quality, setQualityPreset, version, setVersion, duration: version === "v1" ? 52 : 60, mode, setMode, hover, selected, setSelected, filter, setFilter, pointer, canvasRef, progress, ready, error, setError, time, playing, toggle, seek, restart, lang, setLang, lines, voLoading, recording, exportVideo, download };
 }
 
